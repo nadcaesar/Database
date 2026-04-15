@@ -1,5 +1,3 @@
--- Active: 1776191145262@@127.0.0.1@3306
-
 -- ============================================================
 --  GRADE BOOK DATABASE
 --  Database Project — MySQL
@@ -45,7 +43,7 @@ CREATE TABLE Category (
 );
 
 -- Individual assignments belonging to a category
-CREATE TABLE Assignment (
+CREATE TABLE Assignments (
     assignment_id   INT          AUTO_INCREMENT PRIMARY KEY,
     category_id     INT          NOT NULL,
     assignment_name VARCHAR(100) NOT NULL,
@@ -89,8 +87,8 @@ CREATE TABLE Submission (
 
 -- Professor
 INSERT INTO Professor (first_name, last_name, email) VALUES
-    ('Maria', 'Liu',    'mliu@university.edu'), 
-    ('Thomas', 'Jefferson',    'tjefferson@university.edu');
+    ('Maria', 'Liu',    'mliu@university.edu');
+
 
 -- Courses
 INSERT INTO Course (professor_id, department, course_number, course_name, semester, year) VALUES
@@ -112,36 +110,36 @@ INSERT INTO Category (course_id, category_name, weight_pct) VALUES
 
 -- Assignments for CS101
 --   Participation (category_id=1)
-INSERT INTO Assignment (category_id, assignment_name, max_points) VALUES
+INSERT INTO Assignments (category_id, assignment_name, max_points) VALUES
     (1, 'Week 1 Participation',  10),
     (1, 'Week 2 Participation',  10);
 --   Homework (category_id=2) — 5 homeworks, each worth 20%/5 = 4%
-INSERT INTO Assignment (category_id, assignment_name, max_points) VALUES
+INSERT INTO Assignments (category_id, assignment_name, max_points) VALUES
     (2, 'Homework 1', 100),
     (2, 'Homework 2', 100),
     (2, 'Homework 3', 100),
     (2, 'Homework 4', 100),
     (2, 'Homework 5', 100);
 --   Tests (category_id=3)
-INSERT INTO Assignment (category_id, assignment_name, max_points) VALUES
+INSERT INTO Assignments (category_id, assignment_name, max_points) VALUES
     (3, 'Midterm Exam', 100),
     (3, 'Final Exam',   100);
 --   Projects (category_id=4)
-INSERT INTO Assignment (category_id, assignment_name, max_points) VALUES
+INSERT INTO Assignments (category_id, assignment_name, max_points) VALUES
     (4, 'Database Design Project', 100);
 
 -- Assignments for CS201
 --   Participation (category_id=5)
-INSERT INTO Assignment (category_id, assignment_name, max_points) VALUES
+INSERT INTO Assignments (category_id, assignment_name, max_points) VALUES
     (5, 'Week 1 Participation', 10),
     (5, 'Week 2 Participation', 10);
 --   Homework (category_id=6)
-INSERT INTO Assignment (category_id, assignment_name, max_points) VALUES
+INSERT INTO Assignments (category_id, assignment_name, max_points) VALUES
     (6, 'Homework 1', 100),
     (6, 'Homework 2', 100),
     (6, 'Homework 3', 100);
 --   Tests (category_id=7)
-INSERT INTO Assignment (category_id, assignment_name, max_points) VALUES
+INSERT INTO Assignments (category_id, assignment_name, max_points) VALUES
     (7, 'Midterm Exam', 100),
     (7, 'Final Exam',   100);
 
