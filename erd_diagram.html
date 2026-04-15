@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Grade Book ERD</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0d1117;color:#e6edf3;font-family:'Inter',sans-serif;min-height:100vh;padding:32px 24px}
+
+.page-title{text-align:center;margin-bottom:48px}
+.page-title h1{font-size:22px;font-weight:800;color:#e6edf3;letter-spacing:.3px}
+.page-title p{color:#8b949e;font-size:13px;margin-top:6px}
+
+/* Canvas */
+.canvas{position:relative;width:1100px;margin:0 auto;height:740px}
+svg.lines{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+
+/* Entity box */
+.entity{position:absolute;background:#161b22;border-radius:10px;overflow:hidden;z-index:10;min-width:190px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
+.ent-head{padding:10px 14px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#fff}
+.ent-body{padding:4px 0 6px}
+.attr{display:flex;align-items:center;gap:8px;padding:4px 14px;font-family:'JetBrains Mono',monospace;font-size:11.5px}
+.attr.pk{background:#0d2a1c;color:#3fb950;border-left:2px solid #2ea043}
+.attr.fk{background:#0c1f36;color:#79c0ff;border-left:2px solid #1f6feb}
+.attr.reg{color:#8b949e}
+.badge{font-size:9px;font-weight:700;padding:1px 5px;border-radius:3px;flex-shrink:0}
+.pk .badge{background:#1a4731;color:#3fb950;border:1px solid #2ea043}
+.fk .badge{background:#0d2545;color:#58a6ff;border:1px solid #1f6feb}
+.divider{height:1px;background:#21262d;margin:3px 0}
+
+/* Colors */
+.prof .ent-head{background:#1f3a5f}
+.course .ent-head{background:#1a3a28}
+.cat .ent-head{background:#2b1a4a}
+.assign .ent-head{background:#3a2800}
+.student .ent-head{background:#3d1c1c}
+.enroll .ent-head{background:#1a2e3a}
+.submit .ent-head{background:#1c2d1c}
+
+/* Legend */
+.legend{display:flex;gap:28px;justify-content:center;margin-top:32px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:8px;font-size:12px;color:#8b949e;font-family:'JetBrains Mono',monospace}
+.leg-swatch{width:32px;height:3px;border-radius:2px}
+
+/* Rel label */
+.rel-label{position:absolute;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;z-index:20;pointer-events:none;white-space:nowrap}
+.rl-one{background:#0d2a1c;color:#3fb950;border:1px solid #2ea043}
+.rl-many{background:#0c1f36;color:#79c0ff;border:1px solid #1f6feb}
+</style>
+</head>
+<body>
+
+<div class="page-title">
+  <h1>Grade Book Database — Entity Relationship Diagram</h1>
+  <p>Crow's Foot Notation &nbsp;|&nbsp; 🔑 Primary Key &nbsp;·&nbsp; 🔗 Foreign Key</p>
+</div>
+
+<div class="canvas" id="canvas">
+  <svg class="lines" id="svg"></svg>
+
+  <!-- PROFESSOR -->
+  <div class="entity prof" id="e-prof" style="left:20px;top:20px;width:220px">
+    <div class="ent-head">PROFESSOR</div>
+    <div class="ent-body">
+      <div class="attr pk"><span class="badge">PK</span>professor_id</div>
+      <div class="divider"></div>
+      <div class="attr reg">first_name</div>
+      <div class="attr reg">last_name</div>
+      <div class="attr reg">email</div>
+    </div>
+  </div>
+
+  <!-- COURSE -->
+  <div class="entity course" id="e-course" style="left:310px;top:20px;width:240px">
+    <div class="ent-head">COURSE</div>
+    <div class="ent-body">
+      <div class="attr pk"><span class="badge">PK</span>course_id</div>
+      <div class="divider"></div>
+      <div class="attr fk"><span class="badge">FK</span>professor_id</div>
+      <div class="attr reg">department</div>
+      <div class="attr reg">course_number</div>
+      <div class="attr reg">course_name</div>
+      <div class="attr reg">semester</div>
+      <div class="attr reg">year</div>
+    </div>
+  </div>
+
+  <!-- CATEGORY -->
+  <div class="entity cat" id="e-cat" style="left:310px;top:290px;width:240px">
+    <div class="ent-head">CATEGORY</div>
+    <div class="ent-body">
+      <div class="attr pk"><span class="badge">PK</span>category_id</div>
+      <div class="divider"></div>
+      <div class="attr fk"><span class="badge">FK</span>course_id</div>
+      <div class="attr reg">category_name</div>
+      <div class="attr reg">weight_pct</div>
+    </div>
+  </div>
+
+  <!-- ASSIGNMENT -->
+  <div class="entity assign" id="e-assign" style="left:310px;top:510px;width:240px">
+    <div class="ent-head">ASSIGNMENT</div>
+    <div class="ent-body">
+      <div class="attr pk"><span class="badge">PK</span>assignment_id</div>
+      <div class="divider"></div>
+      <div class="attr fk"><span class="badge">FK</span>category_id</div>
+      <div class="attr reg">assignment_name</div>
+      <div class="attr reg">max_points</div>
+    </div>
+  </div>
+
+  <!-- STUDENT -->
+  <div class="entity student" id="e-student" style="left:660px;top:20px;width:220px">
+    <div class="ent-head">STUDENT</div>
+    <div class="ent-body">
+      <div class="attr pk"><span class="badge">PK</span>student_id</div>
+      <div class="divider"></div>
+      <div class="attr reg">first_name</div>
+      <div class="attr reg">last_name</div>
+      <div class="attr reg">email</div>
+    </div>
+  </div>
+
+  <!-- ENROLLMENT -->
+  <div class="entity enroll" id="e-enroll" style="left:660px;top:290px;width:240px">
+    <div class="ent-head">ENROLLMENT</div>
+    <div class="ent-body">
+      <div class="attr pk"><span class="badge">PK</span>enrollment_id</div>
+      <div class="divider"></div>
+      <div class="attr fk"><span class="badge">FK</span>student_id</div>
+      <div class="attr fk"><span class="badge">FK</span>course_id</div>
+    </div>
+  </div>
+
+  <!-- SUBMISSION -->
+  <div class="entity submit" id="e-submit" style="left:660px;top:510px;width:240px">
+    <div class="ent-head">SUBMISSION</div>
+    <div class="ent-body">
+      <div class="attr pk"><span class="badge">PK</span>submission_id</div>
+      <div class="divider"></div>
+      <div class="attr fk"><span class="badge">FK</span>student_id</div>
+      <div class="attr fk"><span class="badge">FK</span>assignment_id</div>
+      <div class="attr reg">score</div>
+    </div>
+  </div>
+
+</div><!-- /canvas -->
+
+<div class="legend">
+  <div class="leg-item"><div class="leg-swatch" style="background:#2ea043"></div> 1 (one side — mandatory)</div>
+  <div class="leg-item"><div class="leg-swatch" style="background:#1f6feb"></div> M (many side)</div>
+  <div class="leg-item"><div class="leg-swatch" style="background:#8957e5"></div> Resolves M:N</div>
+</div>
+
+<script>
+function box(id) {
+  const cvs = document.getElementById('canvas');
+  const el  = document.getElementById(id);
+  const cc  = cvs.getBoundingClientRect();
+  const ec  = el.getBoundingClientRect();
+  return {
+    x: ec.left - cc.left, y: ec.top - cc.top,
+    w: ec.width, h: ec.height,
+    cx: ec.left - cc.left + ec.width/2,
+    cy: ec.top  - cc.top  + ec.height/2,
+    r: ec.left - cc.left + ec.width,
+    b: ec.top  - cc.top  + ec.height
+  };
+}
+
+function side(b, s, f=0.5) {
+  if(s==='top')    return [b.x+b.w*f, b.y];
+  if(s==='bottom') return [b.x+b.w*f, b.b];
+  if(s==='left')   return [b.x,        b.y+b.h*f];
+  if(s==='right')  return [b.r,        b.y+b.h*f];
+}
+
+function drawLine(svg, x1,y1,x2,y2, color, dashed){
+  const p = document.createElementNS("http://www.w3.org/2000/svg","path");
+  const mx=(x1+x2)/2, my=(y1+y2)/2;
+  let d;
+  if(Math.abs(x2-x1)>Math.abs(y2-y1)) d=`M${x1} ${y1} H${mx} V${y2} H${x2}`;
+  else d=`M${x1} ${y1} V${my} H${x2} V${y2}`;
+  p.setAttribute("d",d);
+  p.setAttribute("stroke",color||"#444c56");
+  p.setAttribute("stroke-width","1.5");
+  p.setAttribute("fill","none");
+  if(dashed) p.setAttribute("stroke-dasharray","5,3");
+  svg.appendChild(p);
+}
+
+function tick(svg,x,y,fx,fy,col){
+  const dx=x-fx,dy=y-fy,len=Math.sqrt(dx*dx+dy*dy)||1;
+  const nx=dx/len,ny=dy/len,px=-ny*6,py=nx*6;
+  for(const off of [8,14]){
+    const tx=x-nx*off,ty=y-ny*off;
+    const l=document.createElementNS("http://www.w3.org/2000/svg","line");
+    l.setAttribute("x1",tx-px);l.setAttribute("y1",ty-py);
+    l.setAttribute("x2",tx+px);l.setAttribute("y2",ty+py);
+    l.setAttribute("stroke",col);l.setAttribute("stroke-width","2");
+    svg.appendChild(l);
+  }
+}
+
+function crow(svg,x,y,fx,fy,col){
+  const dx=x-fx,dy=y-fy,len=Math.sqrt(dx*dx+dy*dy)||1;
+  const nx=dx/len,ny=dy/len,px=-ny*6,py=nx*6,back=14;
+  const bx=x-nx*back,by=y-ny*back;
+  for(const [ax,ay] of [[bx,by],[bx-px,by-py],[bx+px,by+py]]){
+    const l=document.createElementNS("http://www.w3.org/2000/svg","line");
+    l.setAttribute("x1",ax);l.setAttribute("y1",ay);
+    l.setAttribute("x2",x);l.setAttribute("y2",y);
+    l.setAttribute("stroke",col);l.setAttribute("stroke-width","1.5");
+    svg.appendChild(l);
+  }
+}
+
+function label(x,y,text,cls){
+  const d=document.createElement("div");
+  d.className="rel-label "+cls;
+  d.style.left=x+"px"; d.style.top=y+"px";
+  d.textContent=text;
+  document.getElementById("canvas").appendChild(d);
+}
+
+window.addEventListener("load",()=>{
+  setTimeout(()=>{
+    const svg=document.getElementById("svg");
+    const G="#2ea043", B="#1f6feb", P="#8957e5";
+
+    const prof=box("e-prof"), course=box("e-course"), cat=box("e-cat");
+    const assign=box("e-assign"), student=box("e-student");
+    const enroll=box("e-enroll"), submit=box("e-submit");
+
+    // PROFESSOR (right) → COURSE (left): 1:M
+    const [p1x,p1y]=side(prof,"right");
+    const [c1x,c1y]=side(course,"left");
+    drawLine(svg,p1x,p1y,c1x,c1y,G);
+    tick(svg,p1x,p1y,c1x,c1y,G);
+    crow(svg,c1x,c1y,p1x,p1y,G);
+    label((p1x+c1x)/2-22,p1y-22,"1:M","rl-many");
+
+    // COURSE (bottom) → CATEGORY (top): 1:M
+    const [co2x,co2y]=side(course,"bottom",0.4);
+    const [ca1x,ca1y]=side(cat,"top",0.4);
+    drawLine(svg,co2x,co2y,ca1x,ca1y,G);
+    tick(svg,co2x,co2y,ca1x,ca1y,G);
+    crow(svg,ca1x,ca1y,co2x,co2y,G);
+    label(co2x+8,(co2y+ca1y)/2,"1:M","rl-many");
+
+    // CATEGORY (bottom) → ASSIGNMENT (top): 1:M
+    const [ca2x,ca2y]=side(cat,"bottom",0.4);
+    const [as1x,as1y]=side(assign,"top",0.4);
+    drawLine(svg,ca2x,ca2y,as1x,as1y,G);
+    tick(svg,ca2x,ca2y,as1x,as1y,G);
+    crow(svg,as1x,as1y,ca2x,ca2y,G);
+    label(ca2x+8,(ca2y+as1y)/2,"1:M","rl-many");
+
+    // STUDENT (bottom) → ENROLLMENT (top): 1:M
+    const [st1x,st1y]=side(student,"bottom",0.4);
+    const [en1x,en1y]=side(enroll,"top",0.4);
+    drawLine(svg,st1x,st1y,en1x,en1y,B);
+    tick(svg,st1x,st1y,en1x,en1y,B);
+    crow(svg,en1x,en1y,st1x,st1y,B);
+    label(en1x+8,(st1y+en1y)/2,"1:M","rl-many");
+
+    // COURSE (right) → ENROLLMENT (left): 1:M
+    const [co3x,co3y]=side(course,"right",0.65);
+    const [en2x,en2y]=side(enroll,"left",0.35);
+    drawLine(svg,co3x,co3y,en2x,en2y,B);
+    tick(svg,co3x,co3y,en2x,en2y,B);
+    crow(svg,en2x,en2y,co3x,co3y,B);
+    label((co3x+en2x)/2-10,co3y-20,"1:M","rl-many");
+
+    // STUDENT (bottom) → SUBMISSION (top): 1:M
+    const [st2x,st2y]=side(student,"bottom",0.7);
+    const [su1x,su1y]=side(submit,"top",0.3);
+    drawLine(svg,st2x,st2y,su1x,su1y,B);
+    tick(svg,st2x,st2y,su1x,su1y,B);
+    crow(svg,su1x,su1y,st2x,st2y,B);
+
+    // ASSIGNMENT (right) → SUBMISSION (left): 1:M
+    const [as2x,as2y]=side(assign,"right",0.5);
+    const [su2x,su2y]=side(submit,"left",0.65);
+    drawLine(svg,as2x,as2y,su2x,su2y,B);
+    tick(svg,as2x,as2y,su2x,su2y,B);
+    crow(svg,su2x,su2y,as2x,as2y,B);
+    label((as2x+su2x)/2-10,as2y-20,"1:M","rl-many");
+
+  }, 150);
+});
+</script>
+</body>
+</html>
