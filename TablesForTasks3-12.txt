@@ -1,0 +1,638 @@
++-----------------+
+|                 |
++-----------------+
+| PROFESSOR TABLE |
++-----------------+
+1 row in set (0.020 sec)
+
++--------------+------------+-----------+---------------------+
+| professor_id | first_name | last_name | email               |
++--------------+------------+-----------+---------------------+
+|            1 | Maria      | Liu       | mliu@university.edu |
++--------------+------------+-----------+---------------------+
+1 row in set (0.004 sec)
+
++--------------+
+|              |
++--------------+
+| COURSE TABLE |
++--------------+
+1 row in set (0.009 sec)
+
++-----------+--------------+------------------+---------------+---------------------------+----------+------+
+| course_id | professor_id | department       | course_number | course_name               | semester | year |
++-----------+--------------+------------------+---------------+---------------------------+----------+------+
+|         1 |            1 | Computer Science | CS101         | Introduction to Databases | Fall     | 2024 |
+|         2 |            1 | Computer Science | CS201         | Data Structures           | Spring   | 2025 |
++-----------+--------------+------------------+---------------+---------------------------+----------+------+
+2 rows in set (0.003 sec)
+
++----------------+
+|                |
++----------------+
+| CATEGORY TABLE |
++----------------+
+1 row in set (0.002 sec)
+
++-------------+-----------+---------------+------------+
+| category_id | course_id | category_name | weight_pct |
++-------------+-----------+---------------+------------+
+|           1 |         1 | Participation |      10.00 |
+|           2 |         1 | Homework      |      20.00 |
+|           3 |         1 | Tests         |      55.00 |
+|           4 |         1 | Projects      |      15.00 |
+|           5 |         2 | Participation |      10.00 |
+|           6 |         2 | Homework      |      30.00 |
+|           7 |         2 | Tests         |      60.00 |
++-------------+-----------+---------------+------------+
+7 rows in set (0.002 sec)
+
++--------------------+
+|                    |
++--------------------+
+| Assignments  TABLE |
++--------------------+
+1 row in set (0.004 sec)
+
++---------------+-------------+-------------------------+------------+
+| assignment_id | category_id | assignment_name         | max_points |
++---------------+-------------+-------------------------+------------+
+|             1 |           1 | Week 1 Participation    |      10.00 |
+|             2 |           1 | Week 2 Participation    |      10.00 |
+|             3 |           2 | Homework 1              |     100.00 |
+|             4 |           2 | Homework 2              |     100.00 |
+|             5 |           2 | Homework 3              |     100.00 |
+|             6 |           2 | Homework 4              |     100.00 |
+|             7 |           2 | Homework 5              |     100.00 |
+|             8 |           3 | Midterm Exam            |     100.00 |
+|             9 |           3 | Final Exam              |     100.00 |
+|            10 |           4 | Database Design Project |     100.00 |
+|            11 |           5 | Week 1 Participation    |      10.00 |
+|            12 |           5 | Week 2 Participation    |      10.00 |
+|            13 |           6 | Homework 1              |     100.00 |
+|            14 |           6 | Homework 2              |     100.00 |
+|            15 |           6 | Homework 3              |     100.00 |
+|            16 |           7 | Midterm Exam            |     100.00 |
+|            17 |           7 | Final Exam              |     100.00 |
+|            18 |           2 | Homework 6              |     100.00 |
++---------------+-------------+-------------------------+------------+
+18 rows in set (0.006 sec)
+
++---------------+
+|               |
++---------------+
+| STUDENT TABLE |
++---------------+
+1 row in set (0.004 sec)
+
++------------+------------+-----------+--------------------------+
+| student_id | first_name | last_name | email                    |
++------------+------------+-----------+--------------------------+
+|          1 | Alice      | Johnson   | alice.johnson@email.com  |
+|          2 | Bob        | Smith     | bob.smith@email.com      |
+|          3 | Carol      | Quinones  | carol.quinones@email.com |
+|          4 | David      | Brown     | david.brown@email.com    |
+|          5 | Eva        | Quinn     | eva.quinn@email.com      |
+|          6 | Frank      | Lee       | frank.lee@email.com      |
+|          7 | Grace      | Martinez  | grace.martinez@email.com |
+|          8 | Henry      | Qiu       | henry.qiu@email.com      |
++------------+------------+-----------+--------------------------+
+8 rows in set (0.003 sec)
+
++------------------+
+|                  |
++------------------+
+| ENROLLMENT TABLE |
++------------------+
+1 row in set (0.003 sec)
+
++---------------+------------+-----------+
+| enrollment_id | student_id | course_id |
++---------------+------------+-----------+
+|             1 |          1 |         1 |
+|             9 |          1 |         2 |
+|             2 |          2 |         1 |
+|            10 |          2 |         2 |
+|             3 |          3 |         1 |
+|            11 |          3 |         2 |
+|             4 |          4 |         1 |
+|            12 |          4 |         2 |
+|             5 |          5 |         1 |
+|            13 |          5 |         2 |
+|             6 |          6 |         1 |
+|             7 |          7 |         1 |
+|             8 |          8 |         1 |
++---------------+------------+-----------+
+13 rows in set (0.003 sec)
+
++------------------+
+|                  |
++------------------+
+| SUBMISSION TABLE |
++------------------+
+1 row in set (0.006 sec)
+
++---------------+------------+---------------+-------+
+| submission_id | student_id | assignment_id | score |
++---------------+------------+---------------+-------+
+|             1 |          1 |             1 |  9.00 |
+|             2 |          2 |             1 |  8.00 |
+|             3 |          3 |             1 | 10.00 |
+|             4 |          4 |             1 |  7.00 |
+|             5 |          5 |             1 |  9.00 |
+|             6 |          6 |             1 |  6.00 |
+|             7 |          7 |             1 |  8.00 |
+|             8 |          8 |             1 | 10.00 |
+|             9 |          1 |             2 | 10.00 |
+|            10 |          2 |             2 |  7.00 |
+|            11 |          3 |             2 |  9.00 |
+|            12 |          4 |             2 |  8.00 |
+|            13 |          5 |             2 | 10.00 |
+|            14 |          6 |             2 |  7.00 |
+|            15 |          7 |             2 |  9.00 |
+|            16 |          8 |             2 |  8.00 |
+|            17 |          1 |             3 | 92.00 |
+|            18 |          2 |             3 | 85.00 |
+|            19 |          3 |             3 | 78.00 |
+|            20 |          4 |             3 | 90.00 |
+|            21 |          5 |             3 | 88.00 |
+|            22 |          6 |             3 | 72.00 |
+|            23 |          7 |             3 | 95.00 |
+|            24 |          8 |             3 | 80.00 |
+|            25 |          1 |             4 | 88.00 |
+|            26 |          2 |             4 | 79.00 |
+|            27 |          3 |             4 | 82.00 |
+|            28 |          4 |             4 | 91.00 |
+|            29 |          5 |             4 | 76.00 |
+|            30 |          6 |             4 | 68.00 |
+|            31 |          7 |             4 | 93.00 |
+|            32 |          8 |             4 | 85.00 |
+|            33 |          1 |             5 | 95.00 |
+|            34 |          2 |             5 | 82.00 |
+|            35 |          3 |             5 | 88.00 |
+|            36 |          4 |             5 | 87.00 |
+|            37 |          5 |             5 | 91.00 |
+|            38 |          6 |             5 | 75.00 |
+|            39 |          7 |             5 | 90.00 |
+|            40 |          8 |             5 | 78.00 |
+|            41 |          1 |             6 | 90.00 |
+|            42 |          2 |             6 | 88.00 |
+|            43 |          3 |             6 | 85.00 |
+|            44 |          4 |             6 | 92.00 |
+|            45 |          5 |             6 | 80.00 |
+|            46 |          6 |             6 | 70.00 |
+|            47 |          7 |             6 | 88.00 |
+|            48 |          8 |             6 | 83.00 |
+|            49 |          1 |             7 | 85.00 |
+|            50 |          2 |             7 | 80.00 |
+|            51 |          3 |             7 | 90.00 |
+|            52 |          4 |             7 | 88.00 |
+|            53 |          5 |             7 | 77.00 |
+|            54 |          6 |             7 | 65.00 |
+|            55 |          7 |             7 | 92.00 |
+|            56 |          8 |             7 | 79.00 |
+|            57 |          1 |             8 | 90.00 |
+|            58 |          2 |             8 | 78.00 |
+|            59 |          3 |             8 | 87.00 |
+|            60 |          4 |             8 | 93.00 |
+|            61 |          5 |             8 | 83.00 |
+|            62 |          6 |             8 | 67.00 |
+|            63 |          7 |             8 | 89.00 |
+|            64 |          8 |             8 | 78.00 |
+|            65 |          1 |             9 | 92.00 |
+|            66 |          2 |             9 | 80.00 |
+|            67 |          3 |             9 | 85.00 |
+|            68 |          4 |             9 | 88.00 |
+|            69 |          5 |             9 | 83.00 |
+|            70 |          6 |             9 | 70.00 |
+|            71 |          7 |             9 | 91.00 |
+|            72 |          8 |             9 | 78.00 |
+|            73 |          1 |            10 | 95.00 |
+|            74 |          2 |            10 | 85.00 |
+|            75 |          3 |            10 | 90.00 |
+|            76 |          4 |            10 | 92.00 |
+|            77 |          5 |            10 | 88.00 |
+|            78 |          6 |            10 | 75.00 |
+|            79 |          7 |            10 | 93.00 |
+|            80 |          8 |            10 | 82.00 |
++---------------+------------+---------------+-------+
+80 rows in set (0.004 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
++------------------------------------+
+|                                    |
++------------------------------------+
+| TASK 4 ÔÇö Assignments  Statistics |
++------------------------------------+
+1 row in set (0.002 sec)
+
++-------------------------+-----------+---------------+--------------+-----------------+
+| assignment_name         | avg_score | highest_score | lowest_score | num_submissions |
++-------------------------+-----------+---------------+--------------+-----------------+
+| Week 1 Participation    |      8.38 |         10.00 |         6.00 |               8 |
+| Week 2 Participation    |      8.50 |         10.00 |         7.00 |               8 |
+| Homework 1              |     85.00 |         95.00 |        72.00 |               8 |
+| Homework 2              |     82.75 |         93.00 |        68.00 |               8 |
+| Homework 3              |     85.75 |         95.00 |        75.00 |               8 |
+| Homework 4              |     84.50 |         92.00 |        70.00 |               8 |
+| Homework 5              |     82.00 |         92.00 |        65.00 |               8 |
+| Midterm Exam            |     83.13 |         93.00 |        67.00 |               8 |
+| Final Exam              |     83.38 |         92.00 |        70.00 |               8 |
+| Database Design Project |     87.50 |         95.00 |        75.00 |               8 |
++-------------------------+-----------+---------------+--------------+-----------------+
+10 rows in set (0.017 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
++----------------------------------------------+
+|                                              |
++----------------------------------------------+
+| TASK 5 ÔÇö Students in CS101 (course_id = 1) |
++----------------------------------------------+
+1 row in set (0.002 sec)
+
++------------+------------+-----------+--------------------------+
+| student_id | first_name | last_name | email                    |
++------------+------------+-----------+--------------------------+
+|          4 | David      | Brown     | david.brown@email.com    |
+|          1 | Alice      | Johnson   | alice.johnson@email.com  |
+|          6 | Frank      | Lee       | frank.lee@email.com      |
+|          7 | Grace      | Martinez  | grace.martinez@email.com |
+|          8 | Henry      | Qiu       | henry.qiu@email.com      |
+|          5 | Eva        | Quinn     | eva.quinn@email.com      |
+|          3 | Carol      | Quinones  | carol.quinones@email.com |
+|          2 | Bob        | Smith     | bob.smith@email.com      |
++------------+------------+-----------+--------------------------+
+8 rows in set (0.005 sec)
+
++----------------------------------------------+
+|                                              |
++----------------------------------------------+
+| TASK 5 ÔÇö Students in CS201 (course_id = 2) |
++----------------------------------------------+
+1 row in set (0.004 sec)
+
++------------+------------+-----------+--------------------------+
+| student_id | first_name | last_name | email                    |
++------------+------------+-----------+--------------------------+
+|          4 | David      | Brown     | david.brown@email.com    |
+|          1 | Alice      | Johnson   | alice.johnson@email.com  |
+|          5 | Eva        | Quinn     | eva.quinn@email.com      |
+|          3 | Carol      | Quinones  | carol.quinones@email.com |
+|          2 | Bob        | Smith     | bob.smith@email.com      |
++------------+------------+-----------+--------------------------+
+5 rows in set (0.005 sec)
+
+Query OK, 0 rows affected (0.005 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
++-------------------------------------------------------------+
+|                                                             |
++-------------------------------------------------------------+
+| TASK 6 ÔÇö All Students and Scores in CS101 (course_id = 1) |
++-------------------------------------------------------------+
+1 row in set (0.003 sec)
+
++------------+-----------+---------------+-------------------------+-------+------------+
+| first_name | last_name | category_name | assignment_name         | score | max_points |
++------------+-----------+---------------+-------------------------+-------+------------+
+| David      | Brown     | Homework      | Homework 1              | 90.00 |     100.00 |
+| David      | Brown     | Homework      | Homework 2              | 91.00 |     100.00 |
+| David      | Brown     | Homework      | Homework 3              | 87.00 |     100.00 |
+| David      | Brown     | Homework      | Homework 4              | 92.00 |     100.00 |
+| David      | Brown     | Homework      | Homework 5              | 88.00 |     100.00 |
+| David      | Brown     | Homework      | Homework 6              |  NULL |     100.00 |
+| David      | Brown     | Participation | Week 1 Participation    |  7.00 |      10.00 |
+| David      | Brown     | Participation | Week 2 Participation    |  8.00 |      10.00 |
+| David      | Brown     | Projects      | Database Design Project | 92.00 |     100.00 |
+| David      | Brown     | Tests         | Final Exam              | 88.00 |     100.00 |
+| David      | Brown     | Tests         | Midterm Exam            | 93.00 |     100.00 |
+| Alice      | Johnson   | Homework      | Homework 1              | 92.00 |     100.00 |
+| Alice      | Johnson   | Homework      | Homework 2              | 88.00 |     100.00 |
+| Alice      | Johnson   | Homework      | Homework 3              | 95.00 |     100.00 |
+| Alice      | Johnson   | Homework      | Homework 4              | 90.00 |     100.00 |
+| Alice      | Johnson   | Homework      | Homework 5              | 85.00 |     100.00 |
+| Alice      | Johnson   | Homework      | Homework 6              |  NULL |     100.00 |
+| Alice      | Johnson   | Participation | Week 1 Participation    |  9.00 |      10.00 |
+| Alice      | Johnson   | Participation | Week 2 Participation    | 10.00 |      10.00 |
+| Alice      | Johnson   | Projects      | Database Design Project | 95.00 |     100.00 |
+| Alice      | Johnson   | Tests         | Final Exam              | 92.00 |     100.00 |
+| Alice      | Johnson   | Tests         | Midterm Exam            | 90.00 |     100.00 |
+| Frank      | Lee       | Homework      | Homework 1              | 72.00 |     100.00 |
+| Frank      | Lee       | Homework      | Homework 2              | 68.00 |     100.00 |
+| Frank      | Lee       | Homework      | Homework 3              | 75.00 |     100.00 |
+| Frank      | Lee       | Homework      | Homework 4              | 70.00 |     100.00 |
+| Frank      | Lee       | Homework      | Homework 5              | 65.00 |     100.00 |
+| Frank      | Lee       | Homework      | Homework 6              |  NULL |     100.00 |
+| Frank      | Lee       | Participation | Week 1 Participation    |  6.00 |      10.00 |
+| Frank      | Lee       | Participation | Week 2 Participation    |  7.00 |      10.00 |
+| Frank      | Lee       | Projects      | Database Design Project | 75.00 |     100.00 |
+| Frank      | Lee       | Tests         | Final Exam              | 70.00 |     100.00 |
+| Frank      | Lee       | Tests         | Midterm Exam            | 67.00 |     100.00 |
+| Grace      | Martinez  | Homework      | Homework 1              | 95.00 |     100.00 |
+| Grace      | Martinez  | Homework      | Homework 2              | 93.00 |     100.00 |
+| Grace      | Martinez  | Homework      | Homework 3              | 90.00 |     100.00 |
+| Grace      | Martinez  | Homework      | Homework 4              | 88.00 |     100.00 |
+| Grace      | Martinez  | Homework      | Homework 5              | 92.00 |     100.00 |
+| Grace      | Martinez  | Homework      | Homework 6              |  NULL |     100.00 |
+| Grace      | Martinez  | Participation | Week 1 Participation    |  8.00 |      10.00 |
+| Grace      | Martinez  | Participation | Week 2 Participation    |  9.00 |      10.00 |
+| Grace      | Martinez  | Projects      | Database Design Project | 93.00 |     100.00 |
+| Grace      | Martinez  | Tests         | Final Exam              | 91.00 |     100.00 |
+| Grace      | Martinez  | Tests         | Midterm Exam            | 89.00 |     100.00 |
+| Henry      | Qiu       | Homework      | Homework 1              | 80.00 |     100.00 |
+| Henry      | Qiu       | Homework      | Homework 2              | 85.00 |     100.00 |
+| Henry      | Qiu       | Homework      | Homework 3              | 78.00 |     100.00 |
+| Henry      | Qiu       | Homework      | Homework 4              | 83.00 |     100.00 |
+| Henry      | Qiu       | Homework      | Homework 5              | 79.00 |     100.00 |
+| Henry      | Qiu       | Homework      | Homework 6              |  NULL |     100.00 |
+| Henry      | Qiu       | Participation | Week 1 Participation    | 10.00 |      10.00 |
+| Henry      | Qiu       | Participation | Week 2 Participation    |  8.00 |      10.00 |
+| Henry      | Qiu       | Projects      | Database Design Project | 82.00 |     100.00 |
+| Henry      | Qiu       | Tests         | Final Exam              | 78.00 |     100.00 |
+| Henry      | Qiu       | Tests         | Midterm Exam            | 78.00 |     100.00 |
+| Eva        | Quinn     | Homework      | Homework 1              | 88.00 |     100.00 |
+| Eva        | Quinn     | Homework      | Homework 2              | 76.00 |     100.00 |
+| Eva        | Quinn     | Homework      | Homework 3              | 91.00 |     100.00 |
+| Eva        | Quinn     | Homework      | Homework 4              | 80.00 |     100.00 |
+| Eva        | Quinn     | Homework      | Homework 5              | 77.00 |     100.00 |
+| Eva        | Quinn     | Homework      | Homework 6              |  NULL |     100.00 |
+| Eva        | Quinn     | Participation | Week 1 Participation    |  9.00 |      10.00 |
+| Eva        | Quinn     | Participation | Week 2 Participation    | 10.00 |      10.00 |
+| Eva        | Quinn     | Projects      | Database Design Project | 88.00 |     100.00 |
+| Eva        | Quinn     | Tests         | Final Exam              | 83.00 |     100.00 |
+| Eva        | Quinn     | Tests         | Midterm Exam            | 83.00 |     100.00 |
+| Carol      | Quinones  | Homework      | Homework 1              | 78.00 |     100.00 |
+| Carol      | Quinones  | Homework      | Homework 2              | 82.00 |     100.00 |
+| Carol      | Quinones  | Homework      | Homework 3              | 88.00 |     100.00 |
+| Carol      | Quinones  | Homework      | Homework 4              | 85.00 |     100.00 |
+| Carol      | Quinones  | Homework      | Homework 5              | 90.00 |     100.00 |
+| Carol      | Quinones  | Homework      | Homework 6              |  NULL |     100.00 |
+| Carol      | Quinones  | Participation | Week 1 Participation    | 10.00 |      10.00 |
+| Carol      | Quinones  | Participation | Week 2 Participation    |  9.00 |      10.00 |
+| Carol      | Quinones  | Projects      | Database Design Project | 90.00 |     100.00 |
+| Carol      | Quinones  | Tests         | Final Exam              | 85.00 |     100.00 |
+| Carol      | Quinones  | Tests         | Midterm Exam            | 87.00 |     100.00 |
+| Bob        | Smith     | Homework      | Homework 1              | 85.00 |     100.00 |
+| Bob        | Smith     | Homework      | Homework 2              | 79.00 |     100.00 |
+| Bob        | Smith     | Homework      | Homework 3              | 82.00 |     100.00 |
+| Bob        | Smith     | Homework      | Homework 4              | 88.00 |     100.00 |
+| Bob        | Smith     | Homework      | Homework 5              | 80.00 |     100.00 |
+| Bob        | Smith     | Homework      | Homework 6              |  NULL |     100.00 |
+| Bob        | Smith     | Participation | Week 1 Participation    |  8.00 |      10.00 |
+| Bob        | Smith     | Participation | Week 2 Participation    |  7.00 |      10.00 |
+| Bob        | Smith     | Projects      | Database Design Project | 85.00 |     100.00 |
+| Bob        | Smith     | Tests         | Final Exam              | 80.00 |     100.00 |
+| Bob        | Smith     | Tests         | Midterm Exam            | 78.00 |     100.00 |
++------------+-----------+---------------+-------------------------+-------+------------+
+88 rows in set (0.026 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
++--------------------------------------------------------+
+|                                                        |
++--------------------------------------------------------+
+| TASK 7 ÔÇö Homework 6 added to CS101 Homework category |
++--------------------------------------------------------+
+1 row in set (0.002 sec)
+
++---------------+-----------------+------------+
+| assignment_id | assignment_name | max_points |
++---------------+-----------------+------------+
+|             3 | Homework 1      |     100.00 |
+|             4 | Homework 2      |     100.00 |
+|             5 | Homework 3      |     100.00 |
+|             6 | Homework 4      |     100.00 |
+|             7 | Homework 5      |     100.00 |
+|            18 | Homework 6      |     100.00 |
++---------------+-----------------+------------+
+6 rows in set (0.004 sec)
+
+Query OK, 0 rows affected (0.012 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
++-----------------------------------------------+
+|                                               |
++-----------------------------------------------+
+| TASK 8 ÔÇö Before: Category weights for CS101 |
++-----------------------------------------------+
+1 row in set (0.002 sec)
+
++---------------+------------+
+| category_name | weight_pct |
++---------------+------------+
+| Homework      |      20.00 |
+| Participation |      10.00 |
+| Projects      |      15.00 |
+| Tests         |      55.00 |
++---------------+------------+
+4 rows in set (0.004 sec)
+
+Query OK, 0 rows affected (0.004 sec)
+Rows matched: 1  Changed: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.003 sec)
+Rows matched: 1  Changed: 0  Warnings: 0
+
++-----------------------------------------------------------------+
+|                                                                 |
++-----------------------------------------------------------------+
+| TASK 8 ÔÇö After: Updated weights (TestsÔåÆ55%, ProjectsÔåÆ15%) |
++-----------------------------------------------------------------+
+1 row in set (0.002 sec)
+
++---------------+------------+
+| category_name | weight_pct |
++---------------+------------+
+| Homework      |      20.00 |
+| Participation |      10.00 |
+| Projects      |      15.00 |
+| Tests         |      55.00 |
++---------------+------------+
+4 rows in set (0.003 sec)
+
++--------------------------------------+
+|                                      |
++--------------------------------------+
+| TASK 8 ÔÇö Verify weights sum to 100 |
++--------------------------------------+
+1 row in set (0.004 sec)
+
++-----------+--------------+
+| course_id | total_weight |
++-----------+--------------+
+|         1 |       100.00 |
++-----------+--------------+
+1 row in set (0.007 sec)
+
+Query OK, 0 rows affected (0.007 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
++------------------------------------------------------------+
+|                                                            |
++------------------------------------------------------------+
+| TASK 9 ÔÇö Before: Midterm Exam scores (assignment_id = 8) |
++------------------------------------------------------------+
+1 row in set (0.002 sec)
+
++------------+-----------+-------+
+| first_name | last_name | score |
++------------+-----------+-------+
+| David      | Brown     | 93.00 |
+| Alice      | Johnson   | 90.00 |
+| Frank      | Lee       | 67.00 |
+| Grace      | Martinez  | 89.00 |
+| Henry      | Qiu       | 78.00 |
+| Eva        | Quinn     | 83.00 |
+| Carol      | Quinones  | 87.00 |
+| Bob        | Smith     | 78.00 |
++------------+-----------+-------+
+8 rows in set (0.005 sec)
+
+Query OK, 8 rows affected (0.037 sec)
+Rows matched: 8  Changed: 8  Warnings: 0
+
++---------------------------------------------------+
+|                                                   |
++---------------------------------------------------+
+| TASK 9 ÔÇö After: +2 points added to all students |
++---------------------------------------------------+
+1 row in set (0.003 sec)
+
++------------+-----------+-------+
+| first_name | last_name | score |
++------------+-----------+-------+
+| David      | Brown     | 95.00 |
+| Alice      | Johnson   | 92.00 |
+| Frank      | Lee       | 69.00 |
+| Grace      | Martinez  | 91.00 |
+| Henry      | Qiu       | 80.00 |
+| Eva        | Quinn     | 85.00 |
+| Carol      | Quinones  | 89.00 |
+| Bob        | Smith     | 80.00 |
++------------+-----------+-------+
+8 rows in set (0.008 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
++---------------------------------------------------------------+
+|                                                               |
++---------------------------------------------------------------+
+| TASK 10 ÔÇö Before: Scores for students with 'Q' in last name |
++---------------------------------------------------------------+
+1 row in set (0.002 sec)
+
++------------+-----------+-------+
+| first_name | last_name | score |
++------------+-----------+-------+
+| Henry      | Qiu       | 80.00 |
+| Eva        | Quinn     | 85.00 |
+| Carol      | Quinones  | 89.00 |
++------------+-----------+-------+
+3 rows in set (0.006 sec)
+
+Query OK, 3 rows affected (0.082 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
++----------------------------------------------------+
+|                                                    |
++----------------------------------------------------+
+| TASK 10 ÔÇö After: +2 points only for 'Q' students |
++----------------------------------------------------+
+1 row in set (0.003 sec)
+
++------------+-----------+-------+
+| first_name | last_name | score |
++------------+-----------+-------+
+| David      | Brown     | 95.00 |
+| Alice      | Johnson   | 92.00 |
+| Frank      | Lee       | 69.00 |
+| Grace      | Martinez  | 91.00 |
+| Henry      | Qiu       | 82.00 |
+| Eva        | Quinn     | 87.00 |
+| Carol      | Quinones  | 91.00 |
+| Bob        | Smith     | 80.00 |
++------------+-----------+-------+
+8 rows in set (0.005 sec)
+
+Query OK, 0 rows affected (0.004 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
++---------------------------------------------------+
+|                                                   |
++---------------------------------------------------+
+| TASK 11 ÔÇö Final Grade for All Students in CS101 |
++---------------------------------------------------+
+1 row in set (0.002 sec)
+
++------------+-----------+---------------------------+-------------+
+| first_name | last_name | course_name               | final_grade |
++------------+-----------+---------------------------+-------------+
+| Alice      | Johnson   | Introduction to Databases |       92.35 |
+| Grace      | Martinez  | Introduction to Databases |       90.82 |
+| David      | Brown     | Introduction to Databases |       89.55 |
+| Carol      | Quinones  | Introduction to Databases |       88.32 |
+| Eva        | Quinn     | Introduction to Databases |       85.93 |
+| Henry      | Qiu       | Introduction to Databases |       81.50 |
+| Bob        | Smith     | Introduction to Databases |       80.81 |
+| Frank      | Lee       | Introduction to Databases |       69.98 |
++------------+-----------+---------------------------+-------------+
+8 rows in set (0.011 sec)
+
+Query OK, 0 rows affected (0.004 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
++------------------------------------------------------------------------------+
+|                                                                              |
++------------------------------------------------------------------------------+
+| TASK 12 ÔÇö Final Grade (Drop Lowest per Category) for All Students in CS101 |
++------------------------------------------------------------------------------+
+1 row in set (0.002 sec)
+
++------------+-----------+---------------------------+-------------------------+
+| first_name | last_name | course_name               | final_grade_drop_lowest |
++------------+-----------+---------------------------+-------------------------+
+| Alice      | Johnson   | Introduction to Databases |                   93.10 |
+| David      | Brown     | Introduction to Databases |                   92.10 |
+| Grace      | Martinez  | Introduction to Databases |                   91.50 |
+| Carol      | Quinones  | Introduction to Databases |                   90.80 |
+| Eva        | Quinn     | Introduction to Databases |                   87.85 |
+| Henry      | Qiu       | Introduction to Databases |                   83.75 |
+| Bob        | Smith     | Introduction to Databases |                   81.50 |
+| Frank      | Lee       | Introduction to Databases |                   71.00 |
++------------+-----------+---------------------------+-------------------------+
+8 rows in set (0.026 sec)

@@ -1,0 +1,637 @@
+================================================================================
+        GRADE BOOK DATABASE — WRITTEN REPORT
+        Howard University | Department of Computer Science
+        Database Systems Course Project
+================================================================================
+
+Team Members:
+  - Brian Kiprop Too
+  - Michael Cobbins
+  - Nicholas Caesar
+
+Date: April 2025
+
+================================================================================
+1. INTRODUCTION
+================================================================================
+
+This report documents the design and implementation of a Grade Book Database
+system built using MySQL. The system allows a professor to manage courses,
+track student enrollment, record assignment scores, and compute final grades
+using weighted grading categories.
+
+The project fulfills all twelve required tasks:
+  Task 2  — Database and table creation
+  Task 3  — Sample data population
+  Task 4  — Assignment score statistics (avg / high / low)
+  Task 5  — List all students in a course
+  Task 6  — All students and all scores in a course
+  Task 7  — Add a new assignment to a course
+  Task 8  — Change category weight percentages for a course
+  Task 9  — Add points to all students on a given assignment
+  Task 10 — Add points only to students whose last name contains 'Q'
+  Task 11 — Compute final weighted grade for a student
+  Task 12 — Compute final grade dropping the lowest score per category
+
+The Python script (gradebook.py) provides an interactive menu interface labeled
+with the corresponding task numbers (4–12) to demonstrate each query.
+
+
+================================================================================
+2. ENTITY-RELATIONSHIP DIAGRAM (ERD) — DESCRIPTION
+================================================================================
+
+The database models the following real-world entities and relationships:
+
+ENTITIES:
+  - Professor    : The instructor who teaches one or more courses.
+  - Course       : A class offered by a professor in a given semester/year.
+  - Category     : A grading category within a course (e.g., Homework, Tests).
+                   Each category has a percentage weight; weights must sum to 100.
+  - Assignments  : Individual assignments belonging to a category.
+  - Student      : A student who enrolls in courses.
+  - Enrollment   : A many-to-many join between Student and Course.
+  - Submission   : A student's score on a specific assignment (many-to-many
+                   join between Student and Assignments, with a score attribute).
+
+KEY RELATIONSHIPS:
+  - Professor  (1) ─── teaches ──── (M) Course
+  - Course     (1) ─── has ────────  (M) Category
+  - Category   (1) ─── contains ─── (M) Assignments
+  - Student    (M) ─── enrolled in ─ (M) Course   [via Enrollment]
+  - Student    (M) ─── submits ───── (M) Assignments [via Submission]
+
+DESIGN DECISIONS:
+  - Table named "Assignments" (plural) to avoid conflict with MySQL reserved word.
+  - weight_pct stored as DECIMAL(5,2) to support precise percentage values.
+  - score in Submission is nullable (NULL = not yet submitted).
+  - UNIQUE constraint on Enrollment(student_id, course_id) prevents duplicate
+    enrollment records.
+  - UNIQUE constraint on Submission(student_id, assignment_id) prevents
+    duplicate score entries per student per assignment.
+  - Category weights are enforced to sum to 100 in application logic (gradebook.py),
+    since MySQL does not support CHECK constraints across rows.
+
+
+================================================================================
+3. DATABASE SCHEMA (Task 2)
+================================================================================
+
+TABLE: Professor
+  professor_id   INT  AUTO_INCREMENT PK
+  first_name     VARCHAR(50)  NOT NULL
+  last_name      VARCHAR(50)  NOT NULL
+  email          VARCHAR(100) UNIQUE
+
+TABLE: Course
+  course_id      INT  AUTO_INCREMENT PK
+  professor_id   INT  NOT NULL  FK → Professor
+  department     VARCHAR(50)  NOT NULL
+  course_number  VARCHAR(20)  NOT NULL
+  course_name    VARCHAR(100) NOT NULL
+  semester       ENUM('Spring','Summer','Fall','Winter') NOT NULL
+  year           YEAR NOT NULL
+
+TABLE: Category
+  category_id    INT  AUTO_INCREMENT PK
+  course_id      INT  NOT NULL  FK → Course
+  category_name  VARCHAR(50)  NOT NULL
+  weight_pct     DECIMAL(5,2) NOT NULL
+  UNIQUE (course_id, category_name)
+
+TABLE: Assignments
+  assignment_id   INT  AUTO_INCREMENT PK
+  category_id     INT  NOT NULL  FK → Category
+  assignment_name VARCHAR(100) NOT NULL
+  max_points      DECIMAL(6,2) NOT NULL DEFAULT 100
+
+TABLE: Student
+  student_id     INT  AUTO_INCREMENT PK
+  first_name     VARCHAR(50)  NOT NULL
+  last_name      VARCHAR(50)  NOT NULL
+  email          VARCHAR(100) UNIQUE
+
+TABLE: Enrollment
+  enrollment_id  INT  AUTO_INCREMENT PK
+  student_id     INT  NOT NULL  FK → Student
+  course_id      INT  NOT NULL  FK → Course
+  UNIQUE (student_id, course_id)
+
+TABLE: Submission
+  submission_id   INT  AUTO_INCREMENT PK
+  student_id      INT  NOT NULL  FK → Student
+  assignment_id   INT  NOT NULL  FK → Assignments
+  score           DECIMAL(6,2)    -- NULL = not yet submitted
+  UNIQUE (student_id, assignment_id)
+
+
+================================================================================
+4. SAMPLE DATA (Task 3)
+================================================================================
+
+The database was populated with realistic sample data covering two courses,
+eight students (including three with 'Q' in their last name for Task 10),
+and all assignment scores.
+
+PROFESSOR TABLE:
+  +------------+-----------+---------------------+
+  | first_name | last_name | email               |
+  +------------+-----------+---------------------+
+  | Maria      | Liu       | mliu@university.edu |
+  +------------+-----------+---------------------+
+
+COURSE TABLE:
+  +-----------+--------------+------------------+---------------------------+----------+------+
+  | course_id | department   | course_number    | course_name               | semester | year |
+  +-----------+--------------+------------------+---------------------------+----------+------+
+  |         1 | Comp Science | CS101            | Introduction to Databases | Fall     | 2024 |
+  |         2 | Comp Science | CS201            | Data Structures           | Spring   | 2025 |
+  +-----------+--------------+------------------+---------------------------+----------+------+
+
+CATEGORY TABLE (CS101 and CS201):
+  +-------------+-----------+---------------+------------+
+  | category_id | course_id | category_name | weight_pct |
+  +-------------+-----------+---------------+------------+
+  |           1 |         1 | Participation |      10.00 |
+  |           2 |         1 | Homework      |      20.00 |
+  |           3 |         1 | Tests         |      55.00 |   ← updated by Task 8
+  |           4 |         1 | Projects      |      15.00 |   ← updated by Task 8
+  |           5 |         2 | Participation |      10.00 |
+  |           6 |         2 | Homework      |      30.00 |
+  |           7 |         2 | Tests         |      60.00 |
+  +-------------+-----------+---------------+------------+
+  (CS101 original weights: Tests=50%, Projects=20%)
+
+ASSIGNMENTS TABLE (CS101 — 10 original + 1 added by Task 7):
+  IDs 1–2   : Week 1 & 2 Participation (max 10 pts each)
+  IDs 3–7   : Homework 1–5 (max 100 pts each)
+  IDs 8–9   : Midterm Exam, Final Exam (max 100 pts each)
+  ID  10    : Database Design Project (max 100 pts)
+  ID  18    : Homework 6 (max 100 pts) — added by Task 7
+
+STUDENT TABLE:
+  +------------+-----------+---------------------------+
+  | first_name | last_name | email                     |
+  +------------+-----------+---------------------------+
+  | Alice      | Johnson   | alice.johnson@email.com   |
+  | Bob        | Smith     | bob.smith@email.com       |
+  | Carol      | Quinones  | carol.quinones@email.com  |  ← 'Q' in last name
+  | David      | Brown     | david.brown@email.com     |
+  | Eva        | Quinn     | eva.quinn@email.com       |  ← 'Q' in last name
+  | Frank      | Lee       | frank.lee@email.com       |
+  | Grace      | Martinez  | grace.martinez@email.com  |
+  | Henry      | Qiu       | henry.qiu@email.com       |  ← 'Q' in last name
+  +------------+-----------+---------------------------+
+
+ENROLLMENT:
+  All 8 students enrolled in CS101.
+  Students 1–5 (Alice, Bob, Carol, David, Eva) also enrolled in CS201.
+
+SUBMISSION (CS101 — 80 score records for assignments 1–10):
+  Score ranges across students:
+    Participation : 6–10 / 10
+    Homework 1–5  : 65–95 / 100
+    Midterm Exam  : 65–91 / 100  (before Task 9 +2 bonus)
+    Final Exam    : 70–92 / 100
+    DB Design Proj: 75–95 / 100
+
+
+================================================================================
+5. QUERY RESULTS — TASKS 4 THROUGH 12
+================================================================================
+
+────────────────────────────────────────────────────────────────────────────────
+TASK 4: Assignment Score Statistics (avg / highest / lowest)
+────────────────────────────────────────────────────────────────────────────────
+
+Query: For each assignment, compute average, highest, and lowest score.
+
+RESULT:
+  +-------------------------+-----------+---------------+--------------+-----------------+
+  | assignment_name         | avg_score | highest_score | lowest_score | num_submissions |
+  +-------------------------+-----------+---------------+--------------+-----------------+
+  | Week 1 Participation    |      8.38 |         10.00 |         6.00 |               8 |
+  | Week 2 Participation    |      8.50 |         10.00 |         7.00 |               8 |
+  | Homework 1              |     85.00 |         95.00 |        72.00 |               8 |
+  | Homework 2              |     82.75 |         93.00 |        68.00 |               8 |
+  | Homework 3              |     85.75 |         95.00 |        75.00 |               8 |
+  | Homework 4              |     84.50 |         92.00 |        70.00 |               8 |
+  | Homework 5              |     82.00 |         92.00 |        65.00 |               8 |
+  | Midterm Exam            |     83.13 |         93.00 |        67.00 |               8 |
+  | Final Exam              |     83.38 |         92.00 |        70.00 |               8 |
+  | Database Design Project |     87.50 |         95.00 |        75.00 |               8 |
+  +-------------------------+-----------+---------------+--------------+-----------------+
+
+Note: Midterm Exam scores reflect the state BEFORE Task 9 bonus points were applied.
+
+
+────────────────────────────────────────────────────────────────────────────────
+TASK 5: List All Students in a Course
+────────────────────────────────────────────────────────────────────────────────
+
+Query: List every student enrolled in a given course, sorted by last name.
+
+CS101 — Introduction to Databases (8 students):
+  +------------+------------+-----------+--------------------------+
+  | student_id | first_name | last_name | email                    |
+  +------------+------------+-----------+--------------------------+
+  |          4 | David      | Brown     | david.brown@email.com    |
+  |          1 | Alice      | Johnson   | alice.johnson@email.com  |
+  |          6 | Frank      | Lee       | frank.lee@email.com      |
+  |          7 | Grace      | Martinez  | grace.martinez@email.com |
+  |          8 | Henry      | Qiu       | henry.qiu@email.com      |
+  |          5 | Eva        | Quinn     | eva.quinn@email.com      |
+  |          3 | Carol      | Quinones  | carol.quinones@email.com |
+  |          2 | Bob        | Smith     | bob.smith@email.com      |
+  +------------+------------+-----------+--------------------------+
+
+CS201 — Data Structures (5 students):
+  +------------+------------+-----------+--------------------------+
+  | student_id | first_name | last_name | email                    |
+  +------------+------------+-----------+--------------------------+
+  |          4 | David      | Brown     | david.brown@email.com    |
+  |          1 | Alice      | Johnson   | alice.johnson@email.com  |
+  |          5 | Eva        | Quinn     | eva.quinn@email.com      |
+  |          3 | Carol      | Quinones  | carol.quinones@email.com |
+  |          2 | Bob        | Smith     | bob.smith@email.com      |
+  +------------+------------+-----------+--------------------------+
+
+
+────────────────────────────────────────────────────────────────────────────────
+TASK 6: All Students and All Scores in a Course
+────────────────────────────────────────────────────────────────────────────────
+
+Query: Show every student's score for every assignment in CS101, grouped by
+student last name and category. NULL score = assignment added after enrollment
+(Homework 6, which was added in Task 7).
+
+RESULT (selected rows — 88 total):
+  +------------+-----------+---------------+-------------------------+-------+------------+
+  | first_name | last_name | category_name | assignment_name         | score | max_points |
+  +------------+-----------+---------------+-------------------------+-------+------------+
+  | Alice      | Johnson   | Homework      | Homework 1              | 92.00 |     100.00 |
+  | Alice      | Johnson   | Homework      | Homework 2              | 88.00 |     100.00 |
+  | Alice      | Johnson   | Homework      | Homework 3              | 95.00 |     100.00 |
+  | Alice      | Johnson   | Homework      | Homework 4              | 90.00 |     100.00 |
+  | Alice      | Johnson   | Homework      | Homework 5              | 85.00 |     100.00 |
+  | Alice      | Johnson   | Homework      | Homework 6              |  NULL |     100.00 |
+  | Alice      | Johnson   | Participation | Week 1 Participation    |  9.00 |      10.00 |
+  | Alice      | Johnson   | Participation | Week 2 Participation    | 10.00 |      10.00 |
+  | Alice      | Johnson   | Projects      | Database Design Project | 95.00 |     100.00 |
+  | Alice      | Johnson   | Tests         | Final Exam              | 92.00 |     100.00 |
+  | Alice      | Johnson   | Tests         | Midterm Exam            | 90.00 |     100.00 |
+  | ...        | ...       | ...           | ...                     | ...   |        ... |
+  +------------+-----------+---------------+-------------------------+-------+------------+
+  (Full output: 88 rows covering all 8 students and 11 assignments)
+
+
+────────────────────────────────────────────────────────────────────────────────
+TASK 7: Add an Assignment to a Course
+────────────────────────────────────────────────────────────────────────────────
+
+Action: INSERT Homework 6 (max 100 pts) into the CS101 Homework category.
+        Blank submissions (NULL score) are created for all 8 enrolled students.
+
+SQL:
+  INSERT INTO Assignments (category_id, assignment_name, max_points)
+  VALUES (2, 'Homework 6', 100);
+
+RESULT — CS101 Homework assignments after addition:
+  +---------------+-----------------+------------+
+  | assignment_id | assignment_name | max_points |
+  +---------------+-----------------+------------+
+  |             3 | Homework 1      |     100.00 |
+  |             4 | Homework 2      |     100.00 |
+  |             5 | Homework 3      |     100.00 |
+  |             6 | Homework 4      |     100.00 |
+  |             7 | Homework 5      |     100.00 |
+  |            18 | Homework 6      |     100.00 |
+  +---------------+-----------------+------------+
+  6 rows — Homework 6 successfully added with assignment_id = 18.
+
+
+────────────────────────────────────────────────────────────────────────────────
+TASK 8: Change Category Weights for a Course
+────────────────────────────────────────────────────────────────────────────────
+
+Action: Shift 5% from Projects to Tests for CS101.
+        Before: Tests = 50%, Projects = 20%
+        After:  Tests = 55%, Projects = 15%
+
+SQL:
+  UPDATE Category SET weight_pct = 55.00 WHERE course_id = 1 AND category_name = 'Tests';
+  UPDATE Category SET weight_pct = 15.00 WHERE course_id = 1 AND category_name = 'Projects';
+
+BEFORE:
+  +---------------+------------+
+  | category_name | weight_pct |
+  +---------------+------------+
+  | Homework      |      20.00 |
+  | Participation |      10.00 |
+  | Projects      |      20.00 |
+  | Tests         |      50.00 |
+  +---------------+------------+
+
+AFTER:
+  +---------------+------------+
+  | category_name | weight_pct |
+  +---------------+------------+
+  | Homework      |      20.00 |
+  | Participation |      10.00 |
+  | Projects      |      15.00 |
+  | Tests         |      55.00 |
+  +---------------+------------+
+
+VERIFICATION (sum = 100):
+  +-----------+--------------+
+  | course_id | total_weight |
+  +-----------+--------------+
+  |         1 |       100.00 |
+  +-----------+--------------+
+
+
+────────────────────────────────────────────────────────────────────────────────
+TASK 9: Add 2 Points to ALL Students on an Assignment
+────────────────────────────────────────────────────────────────────────────────
+
+Action: Add 2 points to every student's Midterm Exam score (assignment_id = 8),
+        capped at max_points (100). Uses LEAST() to enforce the cap.
+
+SQL:
+  UPDATE Submission s
+  JOIN Assignments a ON s.assignment_id = a.assignment_id
+  SET s.score = LEAST(s.score + 2, a.max_points)
+  WHERE s.assignment_id = 8;
+
+BEFORE:                          AFTER:
+  David   Brown    93.00           David   Brown    95.00
+  Alice   Johnson  90.00           Alice   Johnson  92.00
+  Frank   Lee      67.00           Frank   Lee      69.00
+  Grace   Martinez 89.00           Grace   Martinez 91.00
+  Henry   Qiu      78.00           Henry   Qiu      80.00
+  Eva     Quinn    83.00           Eva     Quinn    85.00
+  Carol   Quinones 87.00           Carol   Quinones 89.00
+  Bob     Smith    78.00           Bob     Smith    80.00
+
+Result: 8 rows updated. All scores increased by 2 (David Brown already at 93,
+        now 95, still below max 100).
+
+
+────────────────────────────────────────────────────────────────────────────────
+TASK 10: Add 2 Points ONLY to Students with 'Q' in Last Name
+────────────────────────────────────────────────────────────────────────────────
+
+Action: Add 2 points on Midterm Exam only to students where last_name LIKE '%Q%'.
+        Affected students: Carol Quinones, Eva Quinn, Henry Qiu.
+
+SQL:
+  UPDATE Submission s
+  JOIN Student st ON s.student_id = st.student_id
+  JOIN Assignments a ON s.assignment_id = a.assignment_id
+  SET s.score = LEAST(s.score + 2, a.max_points)
+  WHERE s.assignment_id = 8
+    AND st.last_name LIKE '%Q%';
+
+BEFORE (Q students after Task 9):      AFTER (Task 10 applied):
+  Henry   Qiu       80.00               Henry   Qiu       82.00  (+2)
+  Eva     Quinn     85.00               Eva     Quinn     87.00  (+2)
+  Carol   Quinones  89.00               Carol   Quinones  91.00  (+2)
+
+Non-Q students remain unchanged.
+
+FULL MIDTERM SCORES AFTER TASK 10:
+  +------------+-----------+-------+
+  | first_name | last_name | score |
+  +------------+-----------+-------+
+  | David      | Brown     | 95.00 |
+  | Alice      | Johnson   | 92.00 |
+  | Frank      | Lee       | 69.00 |
+  | Grace      | Martinez  | 91.00 |
+  | Henry      | Qiu       | 82.00 |  ← +4 total (Task 9 + Task 10)
+  | Eva        | Quinn     | 87.00 |  ← +4 total
+  | Carol      | Quinones  | 91.00 |  ← +4 total
+  | Bob        | Smith     | 80.00 |
+  +------------+-----------+-------+
+  Result: 3 rows updated.
+
+
+────────────────────────────────────────────────────────────────────────────────
+TASK 11: Compute Final Grade for a Student (Normal Weighted Average)
+────────────────────────────────────────────────────────────────────────────────
+
+Formula:
+  For each category: AVG(score / max_points) * weight_pct = category contribution
+  Final grade = SUM of all category contributions
+
+Category weights for CS101 (after Task 8):
+  Participation  10%
+  Homework       20%
+  Tests          55%
+  Projects       15%
+
+FINAL GRADES FOR ALL STUDENTS IN CS101:
+  +------------+-----------+---------------------------+-------------+
+  | first_name | last_name | course_name               | final_grade |
+  +------------+-----------+---------------------------+-------------+
+  | Alice      | Johnson   | Introduction to Databases |       92.35 |
+  | Grace      | Martinez  | Introduction to Databases |       90.82 |
+  | David      | Brown     | Introduction to Databases |       89.55 |
+  | Carol      | Quinones  | Introduction to Databases |       88.32 |
+  | Eva        | Quinn     | Introduction to Databases |       85.93 |
+  | Henry      | Qiu       | Introduction to Databases |       81.50 |
+  | Bob        | Smith     | Introduction to Databases |       80.81 |
+  | Frank      | Lee       | Introduction to Databases |       69.98 |
+  +------------+-----------+---------------------------+-------------+
+
+Note: Homework 6 scores are NULL (no submissions recorded) and are excluded
+from the category average per MySQL's AVG() behavior with NULL values.
+
+SAMPLE MANUAL VERIFICATION — Alice Johnson:
+  Participation: AVG(9/10, 10/10)   = 0.95  × 10 =  9.50
+  Homework:      AVG(92,88,95,90,85)/100     = 0.90  × 20 = 18.00
+  Tests:         AVG(92/100, 92/100)         = 0.92  × 55 = 50.60  (Midterm=92 after Tasks 9+10)
+  Projects:      AVG(95/100)                 = 0.95  × 15 = 14.25
+  TOTAL = 9.50 + 18.00 + 50.60 + 14.25 = 92.35 ✓
+
+
+────────────────────────────────────────────────────────────────────────────────
+TASK 12: Final Grade Dropping the Lowest Score Per Category
+────────────────────────────────────────────────────────────────────────────────
+
+Strategy: Use ROW_NUMBER() OVER (PARTITION BY student, category ORDER BY score ASC)
+  to rank scores within each student-category group. Drop the score ranked 1
+  (lowest), but keep it if the category has only one submission (total = 1).
+
+SQL approach:
+  ROW_NUMBER() OVER (PARTITION BY sub.student_id, a.category_id ORDER BY sub.score ASC) AS rn
+  COUNT(*)     OVER (PARTITION BY sub.student_id, a.category_id)                        AS total_in_cat
+  WHERE rn > 1 OR total_in_cat = 1   -- drop the lowest, protect single-entry categories
+
+FINAL GRADES WITH LOWEST DROPPED:
+  +------------+-----------+---------------------------+-------------------------+
+  | first_name | last_name | course_name               | final_grade_drop_lowest |
+  +------------+-----------+---------------------------+-------------------------+
+  | Alice      | Johnson   | Introduction to Databases |                   93.10 |
+  | David      | Brown     | Introduction to Databases |                   92.10 |
+  | Grace      | Martinez  | Introduction to Databases |                   91.50 |
+  | Carol      | Quinones  | Introduction to Databases |                   90.80 |
+  | Eva        | Quinn     | Introduction to Databases |                   87.85 |
+  | Henry      | Qiu       | Introduction to Databases |                   83.75 |
+  | Bob        | Smith     | Introduction to Databases |                   81.50 |
+  | Frank      | Lee       | Introduction to Databases |                   71.00 |
+  +------------+-----------+---------------------------+-------------------------+
+
+COMPARISON (Task 11 vs Task 12 — all students improve or stay equal):
+  Alice   Johnson  : 92.35 → 93.10  (+0.75)
+  Grace   Martinez : 90.82 → 91.50  (+0.68)
+  David   Brown    : 89.55 → 92.10  (+2.55)
+  Carol   Quinones : 88.32 → 90.80  (+2.48)
+  Eva     Quinn    : 85.93 → 87.85  (+1.92)
+  Henry   Qiu      : 81.50 → 83.75  (+2.25)
+  Bob     Smith    : 80.81 → 81.50  (+0.69)
+  Frank   Lee      : 69.98 → 71.00  (+1.02)
+
+Result: Every student's grade equals or improves when the lowest score per
+category is dropped — confirming the implementation is correct.
+
+SAMPLE VERIFICATION — Alice Johnson (drop lowest homework):
+  Homework scores: 85, 88, 90, 92, 95  →  drop 85 → AVG(88,90,92,95) = 91.25
+  Participation scores: 9, 10  →  drop 9 → AVG(10) = 10.0  (only 1 kept)
+  Tests: 92 (Midterm), 92 (Final)  →  drop 92 → AVG(92) = 92.0
+  Projects: 95 only → kept as-is = 95.0
+
+  Participation: 10/10   × 10 = 10.00
+  Homework:      91.25/100 × 20 = 18.25
+  Tests:         92/100  × 55 = 50.60
+  Projects:      95/100  × 15 = 14.25
+  TOTAL = 10.00 + 18.25 + 50.60 + 14.25 = 93.10 ✓
+
+
+================================================================================
+6. PYTHON INTERFACE (gradebook.py)
+================================================================================
+
+The Python script gradebook.py provides an interactive command-line interface
+for all tasks. It connects to the MySQL gradebook database and presents a menu
+with options numbered to match the task numbers from the project rubric.
+
+MENU (task numbers 4–12):
+  ╔══════════════════════════════════════════════════╗
+  ║          GRADE BOOK DATABASE — MENU              ║
+  ╠══════════════════════════════════════════════════╣
+  ║   4.  Assignment stats (avg / high / low)        ║
+  ║   5.  List students in a course                  ║
+  ║   6.  All students + all scores in a course      ║
+  ║   7.  Add an assignment to a course              ║
+  ║   8.  Change category weights for a course       ║
+  ║   9.  Add points to all students on assignment   ║
+  ║  10.  Add points to students with 'Q' in name   ║
+  ║  11.  Compute a student's final grade            ║
+  ║  12.  Grade with lowest score dropped per cat.   ║
+  ║   q.  Quit                                       ║
+  ╚══════════════════════════════════════════════════╝
+
+Key implementation details:
+  - Uses mysql-connector-python for database connectivity.
+  - Uses parameterized queries (%s placeholders) throughout to prevent SQL injection.
+  - Task 7 (Add assignment) automatically inserts NULL-score Submission rows for
+    all enrolled students using INSERT IGNORE to avoid duplicate key errors.
+  - Task 8 (Change weights) validates that entered weights sum to 100 before
+    committing any changes.
+  - Task 9 and 10 use LEAST(score + pts, max_points) to cap scores at maximum.
+  - Task 12 uses the same ROW_NUMBER() window function logic as the SQL report.
+
+
+================================================================================
+7. PROJECT FILES
+================================================================================
+
+  gradebook.sql       — Main submission: schema (Task 2), sample data (Task 3),
+                        and all task queries (Tasks 4–12). Load this first.
+
+  gradebook.py        — Interactive Python menu interface for Tasks 4–12.
+                        Requires: pip install mysql-connector-python
+
+  report_queries.sql  — Report helper script: runs all task queries in sequence,
+                        produces console output suitable for screenshots/text capture.
+
+  TablesForTask3.txt  — Captured output from report_queries.sql showing all 7
+                        table contents and all task results (Tasks 4–12).
+
+  GradeBook_TestCases_And_Results.txt
+                      — Captured test case output from the Python interface,
+                        demonstrating each menu option with real query results.
+
+  WriteUp.txt         — This written report document.
+
+  Grade Book ERD.pdf  — Entity-Relationship Diagram (submitted separately).
+
+
+================================================================================
+8. TEST CASES SUMMARY
+================================================================================
+
+Six key test cases were verified against the live database:
+
+TEST 1 — Task 4: Assignment Statistics
+  Input:    Homework 1 (assignment_id = 3)
+  Expected: avg ≈ 85.00, highest = 95.00, lowest = 72.00
+  Result:   PASS ✓
+
+TEST 2 — Task 5: Students in Course
+  Input:    CS101 (course_id = 1)
+  Expected: 8 students returned, sorted by last name
+  Result:   PASS ✓ (Brown, Johnson, Lee, Martinez, Qiu, Quinn, Quinones, Smith)
+
+TEST 3 — Task 9: Add Points to All Students
+  Input:    Midterm Exam (assignment_id = 8), add 2 points
+  Expected: All 8 students' scores increase by 2 (capped at max 100)
+  Result:   PASS ✓ (8 rows updated; David Brown: 93 → 95)
+
+TEST 4 — Task 10: Add Points to 'Q' Students Only
+  Input:    Midterm Exam (assignment_id = 8), add 2 points, 'Q' filter
+  Expected: Only Quinones, Quinn, Qiu scores increase; others unchanged
+  Result:   PASS ✓ (3 rows updated: Qiu 80→82, Quinn 85→87, Quinones 89→91)
+
+TEST 5 — Task 11: Final Grade Calculation
+  Input:    Alice Johnson (student_id = 1), CS101 (course_id = 1)
+  Expected: Weighted average across all categories ≈ 92.35
+  Result:   PASS ✓
+
+TEST 6 — Task 12: Final Grade Dropping Lowest Per Category
+  Input:    Eva Quinn (student_id = 5), CS101 (course_id = 1)
+  Expected: Grade higher than Task 11 grade (85.93); drop lowest per category
+  Result:   PASS ✓ (Eva Quinn: 85.93 → 87.85 after drop-lowest)
+
+
+================================================================================
+9. CONCLUSION
+================================================================================
+
+The Grade Book Database successfully implements a normalized relational database
+design that supports a realistic academic grading workflow. All 12 project tasks
+have been implemented, tested, and verified:
+
+  - The schema (Task 2) uses proper normalization with foreign key constraints
+    and unique indexes to maintain data integrity.
+
+  - The sample data (Task 3) includes a meaningful variety of students, courses,
+    and assignment scores, with deliberate inclusion of 'Q'-surname students to
+    demonstrate Task 10.
+
+  - The query tasks (4–12) range from simple aggregations (Task 4) to complex
+    multi-level subqueries using window functions (Task 12).
+
+  - The Python interface (gradebook.py) provides a user-friendly menu labeled
+    4–12 that allows interactive demonstration of each query.
+
+  - All test cases passed, including the critical Task 12 validation confirming
+    that drop-lowest grades are always equal to or higher than normal grades.
+
+The most technically challenging component was Task 12, which required using
+ROW_NUMBER() window functions rather than a simpler MIN() filter, because the
+simpler approach incorrectly dropped scores in single-assignment categories.
+
+================================================================================
+END OF REPORT
+================================================================================

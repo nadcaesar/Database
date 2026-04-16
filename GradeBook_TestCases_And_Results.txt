@@ -1,0 +1,1050 @@
+Grade Book Database — Test Cases and Results
+
+Task 4 — Assignment Statistics (avg / highest / lowest score)
+Input: assignment_id = 3 (Homework 1)
+Expected: avg = 85.00, highest = 95.00, lowest = 72.00, 8 submissions
+
+Task 5 — List All Students in a Course
+Input: course_id = 1 (CS101)
+Expected: 8 students returned, sorted by last name
+
+Task 6 — All Students + All Scores in a Course
+Input: course_id = 1 (CS101)
+Expected: All 8 students with scores for all 11 assignments (including Homework 6 as NULL)
+
+Task 9 — Add 2 Points to ALL Students on an Assignment
+Input: assignment_id = 8 (Midterm Exam), add 2 points
+Expected: All 8 students' Midterm scores increase by 2, capped at max_points (100)
+
+Task 10 — Add 2 Points Only to Students Whose Last Name Contains 'Q'
+Input: assignment_id = 8 (Midterm Exam), filter by last name LIKE '%Q%'
+Expected: Only Quinones, Quinn, Qiu affected (3 rows updated); other students unchanged
+
+Task 11 — Compute Final Grade for a Student
+Input: student_id = 1 (Alice Johnson), course_id = 1 (CS101)
+Expected: Weighted final grade reflecting category weights (Participation 10%, Homework 20%, Tests 55%, Projects 15%)
+
+Task 12 — Compute Final Grade Dropping Lowest Score Per Category
+Input: student_id = 5 (Eva Quinn), course_id = 1 (CS101)
+Expected: Grade higher than Task 11 result for same student; lowest score per category excluded
+
+
+
+
+╔══════════════════════════════════════════════════╗
+║          GRADE BOOK DATABASE — MENU              ║
+╠══════════════════════════════════════════════════╣
+║  1.  Assignment stats (avg / high / low)         ║
+║  2.  List students in a course                   ║
+║  3.  All students + all scores in a course       ║
+║  4.  Add an assignment to a course               ║
+║  5.  Change category weights for a course        ║
+║  6.  Add points to all students on assignment    ║
+║  7. Add points to students with 'Q' in name     ║
+║  8. Compute a student's final grade             ║
+║  9. Grade with lowest score dropped per cat.    ║
+║  q.  Quit                                        ║
+╚══════════════════════════════════════════════════╝
+                   1
+Enter task number: 
+Available Assignments:
++---------------+-------------------------+
+| assignment_id | assignment_name         |
++---------------+-------------------------+
+| 1             | Week 1 Participation    |
+| 2             | Week 2 Participation    |
+| 3             | Homework 1              |
+| 4             | Homework 2              |
+| 5             | Homework 3              |
+| 6             | Homework 4              |
+| 7             | Homework 5              |
+| 8             | Midterm Exam            |
+| 9             | Final Exam              |
+| 10            | Database Design Project |
+| 11            | Week 1 Participation    |
+| 12            | Week 2 Participation    |
+| 13            | Homework 1              |
+| 14            | Homework 2              |
+| 15            | Homework 3              |
+| 16            | Midterm Exam            |
+| 17            | Final Exam              |
+| 18            | Homework 6              |
+| 19            | Homework 6              |
++---------------+-------------------------+
+  19 row(s) returned.
+
+Enter assignment_id to get stats: 3
++-----------------+-----------+---------------+--------------+-------------+
+| assignment_name | avg_score | highest_score | lowest_score | submissions |
++-----------------+-----------+---------------+--------------+-------------+
+| Homework 1      | 85.00     | 95.00         | 72.00        | 8           |
++-----------------+-----------+---------------+--------------+-------------+
+  1 row(s) returned.
+
+
+╔══════════════════════════════════════════════════╗
+║          GRADE BOOK DATABASE — MENU              ║
+╠══════════════════════════════════════════════════╣
+║  1.  Assignment stats (avg / high / low)         ║
+║  2.  List students in a course                   ║
+║  3.  All students + all scores in a course       ║
+║  4.  Add an assignment to a course               ║
+║  5.  Change category weights for a course        ║
+║  6.  Add points to all students on assignment    ║
+║  7. Add points to students with 'Q' in name     ║
+║  8. Compute a student's final grade             ║
+║  9. Grade with lowest score dropped per cat.    ║
+║  q.  Quit                                        ║
+╚══════════════════════════════════════════════════╝
+
+Enter task number: 2
+
+Available Courses:
++-----------+---------------------------+----------+------+
+| course_id | course_name               | semester | year |
++-----------+---------------------------+----------+------+
+| 1         | Introduction to Databases | Fall     | 2024 |
+| 2         | Data Structures           | Spring   | 2025 |
++-----------+---------------------------+----------+------+
+  2 row(s) returned.
+
+Enter course_id: 1
++------------+------------+-----------+--------------------------+
+| student_id | first_name | last_name | email                    |
++------------+------------+-----------+--------------------------+
+| 4          | David      | Brown     | david.brown@email.com    |
+| 1          | Alice      | Johnson   | alice.johnson@email.com  |
+| 6          | Frank      | Lee       | frank.lee@email.com      |
+| 7          | Grace      | Martinez  | grace.martinez@email.com |
+| 8          | Henry      | Qiu       | henry.qiu@email.com      |
+| 5          | Eva        | Quinn     | eva.quinn@email.com      |
+| 3          | Carol      | Quinones  | carol.quinones@email.com |
+| 2          | Bob        | Smith     | bob.smith@email.com      |
++------------+------------+-----------+--------------------------+
+  8 row(s) returned.
+
+
+╔══════════════════════════════════════════════════╗
+║          GRADE BOOK DATABASE — MENU              ║
+╠══════════════════════════════════════════════════╣
+║  1.  Assignment stats (avg / high / low)         ║
+║  2.  List students in a course                   ║
+║  3.  All students + all scores in a course       ║
+║  4.  Add an assignment to a course               ║
+║  5.  Change category weights for a course        ║
+║  6.  Add points to all students on assignment    ║
+║  7. Add points to students with 'Q' in name     ║
+║  8. Compute a student's final grade             ║
+║  9. Grade with lowest score dropped per cat.    ║
+║  q.  Quit                                        ║
+╚══════════════════════════════════════════════════╝
+
+Enter task number: 6
+
+Available Assignments:
++---------------+-------------------------+------------+
+| assignment_id | assignment_name         | max_points |
++---------------+-------------------------+------------+
+| 1             | Week 1 Participation    | 10.00      |
+| 2             | Week 2 Participation    | 10.00      |
+| 3             | Homework 1              | 100.00     |
+| 4             | Homework 2              | 100.00     |
+| 5             | Homework 3              | 100.00     |
+| 6             | Homework 4              | 100.00     |
+| 7             | Homework 5              | 100.00     |
+| 8             | Midterm Exam            | 100.00     |
+| 9             | Final Exam              | 100.00     |
+| 10            | Database Design Project | 100.00     |
+| 11            | Week 1 Participation    | 10.00      |
+| 12            | Week 2 Participation    | 10.00      |
+| 13            | Homework 1              | 100.00     |
+| 14            | Homework 2              | 100.00     |
+| 15            | Homework 3              | 100.00     |
+| 16            | Midterm Exam            | 100.00     |
+| 17            | Final Exam              | 100.00     |
+| 18            | Homework 6              | 100.00     |
+| 19            | Homework 6              | 100.00     |
++---------------+-------------------------+------------+
+  19 row(s) returned.
+
+Enter assignment_id to add 2 points to (all students): 8
+Points to add (default 2): 2
+  ✅ Added 2.0 points to 8 submission(s), capped at max_points.
+
+
+╔══════════════════════════════════════════════════╗
+║          GRADE BOOK DATABASE — MENU              ║
+╠══════════════════════════════════════════════════╣
+║  1.  Assignment stats (avg / high / low)         ║
+║  2.  List students in a course                   ║
+║  3.  All students + all scores in a course       ║
+║  4.  Add an assignment to a course               ║
+║  5.  Change category weights for a course        ║
+║  6.  Add points to all students on assignment    ║
+║  7. Add points to students with 'Q' in name     ║
+║  8. Compute a student's final grade             ║
+║  9. Grade with lowest score dropped per cat.    ║
+║  q.  Quit                                        ║
+╚══════════════════════════════════════════════════╝
+
+Enter task number: 3
+
+Available Courses:
++-----------+---------------------------+
+| course_id | course_name               |
++-----------+---------------------------+
+| 1         | Introduction to Databases |
+| 2         | Data Structures           |
++-----------+---------------------------+
+  2 row(s) returned.
+
+Enter course_id: 1
++------------+-----------+---------------+-------------------------+-------+------------+
+| first_name | last_name | category_name | assignment_name         | score | max_points |
++------------+-----------+---------------+-------------------------+-------+------------+
+| David      | Brown     | Homework      | Homework 1              | 90.00 | 100.00     |
+| David      | Brown     | Homework      | Homework 2              | 91.00 | 100.00     |
+| David      | Brown     | Homework      | Homework 3              | 87.00 | 100.00     |
+| David      | Brown     | Homework      | Homework 4              | 92.00 | 100.00     |
+| David      | Brown     | Homework      | Homework 5              | 88.00 | 100.00     |
+| David      | Brown     | Homework      | Homework 6              | NULL  | 100.00     |
+| David      | Brown     | Homework      | Homework 6              | NULL  | 100.00     |
+| David      | Brown     | Participation | Week 1 Participation    | 7.00  | 10.00      |
+| David      | Brown     | Participation | Week 2 Participation    | 8.00  | 10.00      |
+| David      | Brown     | Projects      | Database Design Project | 92.00 | 100.00     |
+| David      | Brown     | Tests         | Final Exam              | 88.00 | 100.00     |
+| David      | Brown     | Tests         | Midterm Exam            | 97.00 | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 1              | 92.00 | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 2              | 88.00 | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 3              | 95.00 | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 4              | 90.00 | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 5              | 85.00 | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 6              | NULL  | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 6              | NULL  | 100.00     |
+| Alice      | Johnson   | Participation | Week 1 Participation    | 9.00  | 10.00      |
+| Alice      | Johnson   | Participation | Week 2 Participation    | 10.00 | 10.00      |
+| Alice      | Johnson   | Projects      | Database Design Project | 95.00 | 100.00     |
+| Alice      | Johnson   | Tests         | Final Exam              | 92.00 | 100.00     |
+| Alice      | Johnson   | Tests         | Midterm Exam            | 94.00 | 100.00     |
+| Frank      | Lee       | Homework      | Homework 1              | 72.00 | 100.00     |
+| Frank      | Lee       | Homework      | Homework 2              | 68.00 | 100.00     |
+| Frank      | Lee       | Homework      | Homework 3              | 75.00 | 100.00     |
+| Frank      | Lee       | Homework      | Homework 4              | 70.00 | 100.00     |
+| Frank      | Lee       | Homework      | Homework 5              | 65.00 | 100.00     |
+| Frank      | Lee       | Homework      | Homework 6              | NULL  | 100.00     |
+| Frank      | Lee       | Homework      | Homework 6              | NULL  | 100.00     |
+| Frank      | Lee       | Participation | Week 1 Participation    | 6.00  | 10.00      |
+| Frank      | Lee       | Participation | Week 2 Participation    | 7.00  | 10.00      |
+| Frank      | Lee       | Projects      | Database Design Project | 75.00 | 100.00     |
+| Frank      | Lee       | Tests         | Final Exam              | 70.00 | 100.00     |
+| Frank      | Lee       | Tests         | Midterm Exam            | 71.00 | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 1              | 95.00 | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 2              | 93.00 | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 3              | 90.00 | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 4              | 88.00 | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 5              | 92.00 | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 6              | NULL  | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 6              | NULL  | 100.00     |
+| Grace      | Martinez  | Participation | Week 1 Participation    | 8.00  | 10.00      |
+| Grace      | Martinez  | Participation | Week 2 Participation    | 9.00  | 10.00      |
+| Grace      | Martinez  | Projects      | Database Design Project | 93.00 | 100.00     |
+| Grace      | Martinez  | Tests         | Final Exam              | 91.00 | 100.00     |
+| Grace      | Martinez  | Tests         | Midterm Exam            | 93.00 | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 1              | 80.00 | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 2              | 85.00 | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 3              | 78.00 | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 4              | 83.00 | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 5              | 79.00 | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 6              | NULL  | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 6              | NULL  | 100.00     |
+| Henry      | Qiu       | Participation | Week 1 Participation    | 10.00 | 10.00      |
+| Henry      | Qiu       | Participation | Week 2 Participation    | 8.00  | 10.00      |
+| Henry      | Qiu       | Projects      | Database Design Project | 82.00 | 100.00     |
+| Henry      | Qiu       | Tests         | Final Exam              | 78.00 | 100.00     |
+| Henry      | Qiu       | Tests         | Midterm Exam            | 84.00 | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 1              | 88.00 | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 2              | 76.00 | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 3              | 91.00 | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 4              | 80.00 | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 5              | 77.00 | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 6              | NULL  | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 6              | NULL  | 100.00     |
+| Eva        | Quinn     | Participation | Week 1 Participation    | 9.00  | 10.00      |
+| Eva        | Quinn     | Participation | Week 2 Participation    | 10.00 | 10.00      |
+| Eva        | Quinn     | Projects      | Database Design Project | 88.00 | 100.00     |
+| Eva        | Quinn     | Tests         | Final Exam              | 83.00 | 100.00     |
+| Eva        | Quinn     | Tests         | Midterm Exam            | 89.00 | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 1              | 78.00 | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 2              | 82.00 | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 3              | 88.00 | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 4              | 85.00 | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 5              | 90.00 | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 6              | NULL  | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 6              | NULL  | 100.00     |
+| Carol      | Quinones  | Participation | Week 1 Participation    | 10.00 | 10.00      |
+| Carol      | Quinones  | Participation | Week 2 Participation    | 9.00  | 10.00      |
+| Carol      | Quinones  | Projects      | Database Design Project | 90.00 | 100.00     |
+| Carol      | Quinones  | Tests         | Final Exam              | 85.00 | 100.00     |
+| Carol      | Quinones  | Tests         | Midterm Exam            | 93.00 | 100.00     |
+| Bob        | Smith     | Homework      | Homework 1              | 85.00 | 100.00     |
+| Bob        | Smith     | Homework      | Homework 2              | 79.00 | 100.00     |
+| Bob        | Smith     | Homework      | Homework 3              | 82.00 | 100.00     |
+| Bob        | Smith     | Homework      | Homework 4              | 88.00 | 100.00     |
+| Bob        | Smith     | Homework      | Homework 5              | 80.00 | 100.00     |
+| Bob        | Smith     | Homework      | Homework 6              | NULL  | 100.00     |
+| Bob        | Smith     | Homework      | Homework 6              | NULL  | 100.00     |
+| Bob        | Smith     | Participation | Week 1 Participation    | 8.00  | 10.00      |
+| Bob        | Smith     | Participation | Week 2 Participation    | 7.00  | 10.00      |
+| Bob        | Smith     | Projects      | Database Design Project | 85.00 | 100.00     |
+| Bob        | Smith     | Tests         | Final Exam              | 80.00 | 100.00     |
+| Bob        | Smith     | Tests         | Midterm Exam            | 82.00 | 100.00     |
++------------+-----------+---------------+-------------------------+-------+------------+
+  96 row(s) returned.
+
+
+╔══════════════════════════════════════════════════╗
+║          GRADE BOOK DATABASE — MENU              ║
+╠══════════════════════════════════════════════════╣
+║  1.  Assignment stats (avg / high / low)         ║
+║  2.  List students in a course                   ║
+║  3.  All students + all scores in a course       ║
+║  4.  Add an assignment to a course               ║
+║  5.  Change category weights for a course        ║
+║  6.  Add points to all students on assignment    ║
+║  7. Add points to students with 'Q' in name     ║
+║  8. Compute a student's final grade             ║
+║  9. Grade with lowest score dropped per cat.    ║
+║  q.  Quit                                        ║
+╚══════════════════════════════════════════════════╝
+
+Enter task number: 7
+
+Available Assignments:
++---------------+-------------------------+------------+
+| assignment_id | assignment_name         | max_points |
++---------------+-------------------------+------------+
+| 1             | Week 1 Participation    | 10.00      |
+| 2             | Week 2 Participation    | 10.00      |
+| 3             | Homework 1              | 100.00     |
+| 4             | Homework 2              | 100.00     |
+| 5             | Homework 3              | 100.00     |
+| 6             | Homework 4              | 100.00     |
+| 7             | Homework 5              | 100.00     |
+| 8             | Midterm Exam            | 100.00     |
+| 9             | Final Exam              | 100.00     |
+| 10            | Database Design Project | 100.00     |
+| 11            | Week 1 Participation    | 10.00      |
+| 12            | Week 2 Participation    | 10.00      |
+| 13            | Homework 1              | 100.00     |
+| 14            | Homework 2              | 100.00     |
+| 15            | Homework 3              | 100.00     |
+| 16            | Midterm Exam            | 100.00     |
+| 17            | Final Exam              | 100.00     |
+| 18            | Homework 6              | 100.00     |
+| 19            | Homework 6              | 100.00     |
++---------------+-------------------------+------------+
+  19 row(s) returned.
+
+Enter assignment_id (only students with 'Q' in last name get +2): 13
+Points to add (default 2): 1
+  ✅ Added 1.0 points to 0 student(s) with 'Q' in last name.
+
+
+╔══════════════════════════════════════════════════╗
+║          GRADE BOOK DATABASE — MENU              ║
+╠══════════════════════════════════════════════════╣
+║  1.  Assignment stats (avg / high / low)         ║
+║  2.  List students in a course                   ║
+║  3.  All students + all scores in a course       ║
+║  4.  Add an assignment to a course               ║
+║  5.  Change category weights for a course        ║
+║  6.  Add points to all students on assignment    ║
+║  7. Add points to students with 'Q' in name     ║
+║  8. Compute a student's final grade             ║
+║  9. Grade with lowest score dropped per cat.    ║
+║  q.  Quit                                        ║
+╚══════════════════════════════════════════════════╝
+
+Enter task number: 3
+
+Available Courses:
++-----------+---------------------------+
+| course_id | course_name               |
++-----------+---------------------------+
+| 1         | Introduction to Databases |
+| 2         | Data Structures           |
++-----------+---------------------------+
+  2 row(s) returned.
+
+Enter course_id: 1
++------------+-----------+---------------+-------------------------+-------+------------+
+| first_name | last_name | category_name | assignment_name         | score | max_points |
++------------+-----------+---------------+-------------------------+-------+------------+
+| David      | Brown     | Homework      | Homework 1              | 90.00 | 100.00     |
+| David      | Brown     | Homework      | Homework 2              | 91.00 | 100.00     |
+| David      | Brown     | Homework      | Homework 3              | 87.00 | 100.00     |
+| David      | Brown     | Homework      | Homework 4              | 92.00 | 100.00     |
+| David      | Brown     | Homework      | Homework 5              | 88.00 | 100.00     |
+| David      | Brown     | Homework      | Homework 6              | NULL  | 100.00     |
+| David      | Brown     | Homework      | Homework 6              | NULL  | 100.00     |
+| David      | Brown     | Participation | Week 1 Participation    | 7.00  | 10.00      |
+| David      | Brown     | Participation | Week 2 Participation    | 8.00  | 10.00      |
+| David      | Brown     | Projects      | Database Design Project | 92.00 | 100.00     |
+| David      | Brown     | Tests         | Final Exam              | 88.00 | 100.00     |
+| David      | Brown     | Tests         | Midterm Exam            | 97.00 | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 1              | 92.00 | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 2              | 88.00 | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 3              | 95.00 | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 4              | 90.00 | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 5              | 85.00 | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 6              | NULL  | 100.00     |
+| Alice      | Johnson   | Homework      | Homework 6              | NULL  | 100.00     |
+| Alice      | Johnson   | Participation | Week 1 Participation    | 9.00  | 10.00      |
+| Alice      | Johnson   | Participation | Week 2 Participation    | 10.00 | 10.00      |
+| Alice      | Johnson   | Projects      | Database Design Project | 95.00 | 100.00     |
+| Alice      | Johnson   | Tests         | Final Exam              | 92.00 | 100.00     |
+| Alice      | Johnson   | Tests         | Midterm Exam            | 94.00 | 100.00     |
+| Frank      | Lee       | Homework      | Homework 1              | 72.00 | 100.00     |
+| Frank      | Lee       | Homework      | Homework 2              | 68.00 | 100.00     |
+| Frank      | Lee       | Homework      | Homework 3              | 75.00 | 100.00     |
+| Frank      | Lee       | Homework      | Homework 4              | 70.00 | 100.00     |
+| Frank      | Lee       | Homework      | Homework 5              | 65.00 | 100.00     |
+| Frank      | Lee       | Homework      | Homework 6              | NULL  | 100.00     |
+| Frank      | Lee       | Homework      | Homework 6              | NULL  | 100.00     |
+| Frank      | Lee       | Participation | Week 1 Participation    | 6.00  | 10.00      |
+| Frank      | Lee       | Participation | Week 2 Participation    | 7.00  | 10.00      |
+| Frank      | Lee       | Projects      | Database Design Project | 75.00 | 100.00     |
+| Frank      | Lee       | Tests         | Final Exam              | 70.00 | 100.00     |
+| Frank      | Lee       | Tests         | Midterm Exam            | 71.00 | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 1              | 95.00 | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 2              | 93.00 | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 3              | 90.00 | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 4              | 88.00 | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 5              | 92.00 | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 6              | NULL  | 100.00     |
+| Grace      | Martinez  | Homework      | Homework 6              | NULL  | 100.00     |
+| Grace      | Martinez  | Participation | Week 1 Participation    | 8.00  | 10.00      |
+| Grace      | Martinez  | Participation | Week 2 Participation    | 9.00  | 10.00      |
+| Grace      | Martinez  | Projects      | Database Design Project | 93.00 | 100.00     |
+| Grace      | Martinez  | Tests         | Final Exam              | 91.00 | 100.00     |
+| Grace      | Martinez  | Tests         | Midterm Exam            | 93.00 | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 1              | 80.00 | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 2              | 85.00 | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 3              | 78.00 | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 4              | 83.00 | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 5              | 79.00 | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 6              | NULL  | 100.00     |
+| Henry      | Qiu       | Homework      | Homework 6              | NULL  | 100.00     |
+| Henry      | Qiu       | Participation | Week 1 Participation    | 10.00 | 10.00      |
+| Henry      | Qiu       | Participation | Week 2 Participation    | 8.00  | 10.00      |
+| Henry      | Qiu       | Projects      | Database Design Project | 82.00 | 100.00     |
+| Henry      | Qiu       | Tests         | Final Exam              | 78.00 | 100.00     |
+| Henry      | Qiu       | Tests         | Midterm Exam            | 84.00 | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 1              | 88.00 | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 2              | 76.00 | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 3              | 91.00 | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 4              | 80.00 | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 5              | 77.00 | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 6              | NULL  | 100.00     |
+| Eva        | Quinn     | Homework      | Homework 6              | NULL  | 100.00     |
+| Eva        | Quinn     | Participation | Week 1 Participation    | 9.00  | 10.00      |
+| Eva        | Quinn     | Participation | Week 2 Participation    | 10.00 | 10.00      |
+| Eva        | Quinn     | Projects      | Database Design Project | 88.00 | 100.00     |
+| Eva        | Quinn     | Tests         | Final Exam              | 83.00 | 100.00     |
+| Eva        | Quinn     | Tests         | Midterm Exam            | 89.00 | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 1              | 78.00 | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 2              | 82.00 | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 3              | 88.00 | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 4              | 85.00 | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 5              | 90.00 | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 6              | NULL  | 100.00     |
+| Carol      | Quinones  | Homework      | Homework 6              | NULL  | 100.00     |
+| Carol      | Quinones  | Participation | Week 1 Participation    | 10.00 | 10.00      |
+| Carol      | Quinones  | Participation | Week 2 Participation    | 9.00  | 10.00      |
+| Carol      | Quinones  | Projects      | Database Design Project | 90.00 | 100.00     |
+| Carol      | Quinones  | Tests         | Final Exam              | 85.00 | 100.00     |
+| Carol      | Quinones  | Tests         | Midterm Exam            | 93.00 | 100.00     |
+| Bob        | Smith     | Homework      | Homework 1              | 85.00 | 100.00     |
+| Bob        | Smith     | Homework      | Homework 2              | 79.00 | 100.00     |
+| Bob        | Smith     | Homework      | Homework 3              | 82.00 | 100.00     |
+| Bob        | Smith     | Homework      | Homework 4              | 88.00 | 100.00     |
+| Bob        | Smith     | Homework      | Homework 5              | 80.00 | 100.00     |
+| Bob        | Smith     | Homework      | Homework 6              | NULL  | 100.00     |
+| Bob        | Smith     | Homework      | Homework 6              | NULL  | 100.00     |
+| Bob        | Smith     | Participation | Week 1 Participation    | 8.00  | 10.00      |
+| Bob        | Smith     | Participation | Week 2 Participation    | 7.00  | 10.00      |
+| Bob        | Smith     | Projects      | Database Design Project | 85.00 | 100.00     |
+| Bob        | Smith     | Tests         | Final Exam              | 80.00 | 100.00     |
+| Bob        | Smith     | Tests         | Midterm Exam            | 82.00 | 100.00     |
++------------+-----------+---------------+-------------------------+-------+------------+
+  96 row(s) returned.
+
+
+╔══════════════════════════════════════════════════╗
+║          GRADE BOOK DATABASE — MENU              ║
+╠══════════════════════════════════════════════════╣
+║  1.  Assignment stats (avg / high / low)         ║
+║  2.  List students in a course                   ║
+║  3.  All students + all scores in a course       ║
+║  4.  Add an assignment to a course               ║
+║  5.  Change category weights for a course        ║
+║  6.  Add points to all students on assignment    ║
+║  7. Add points to students with 'Q' in name     ║
+║  8. Compute a student's final grade             ║
+║  9. Grade with lowest score dropped per cat.    ║
+║  q.  Quit                                        ║
+╚══════════════════════════════════════════════════╝
+
+Enter task number: 8
+
+Students:
++------------+------------+-----------+
+| student_id | first_name | last_name |
++------------+------------+-----------+
+| 1          | Alice      | Johnson   |
+| 2          | Bob        | Smith     |
+| 3          | Carol      | Quinones  |
+| 4          | David      | Brown     |
+| 5          | Eva        | Quinn     |
+| 6          | Frank      | Lee       |
+| 7          | Grace      | Martinez  |
+| 8          | Henry      | Qiu       |
++------------+------------+-----------+
+  8 row(s) returned.
+
+Enter student_id: 1
+
+Courses:
++-----------+---------------------------+
+| course_id | course_name               |
++-----------+---------------------------+
+| 1         | Introduction to Databases |
+| 2         | Data Structures           |
++-----------+---------------------------+
+  2 row(s) returned.
+
+Enter course_id: 1
++------------+-----------+---------------------------+-------------+
+| first_name | last_name | course_name               | final_grade |
++------------+-----------+---------------------------+-------------+
+| Alice      | Johnson   | Introduction to Databases | 92.90       |
++------------+-----------+---------------------------+-------------+
+  1 row(s) returned.
+
+
+╔══════════════════════════════════════════════════╗
+║          GRADE BOOK DATABASE — MENU              ║
+╠══════════════════════════════════════════════════╣
+║  1.  Assignment stats (avg / high / low)         ║
+║  2.  List students in a course                   ║
+║  3.  All students + all scores in a course       ║
+║  4.  Add an assignment to a course               ║
+║  5.  Change category weights for a course        ║
+║  6.  Add points to all students on assignment    ║
+║  7. Add points to students with 'Q' in name     ║
+║  8. Compute a student's final grade             ║
+║  9. Grade with lowest score dropped per cat.    ║
+║  q.  Quit                                        ║
+╚══════════════════════════════════════════════════╝
+
+Enter task number: q
+  Goodbye!
+
+
+
+mysql> source gradebook.sql
+Query OK, 0 rows affected (0.006 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 7 rows affected (1.842 sec)
+
+Query OK, 1 row affected (0.074 sec)
+
+Query OK, 0 rows affected (0.005 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.394 sec)
+
+Query OK, 0 rows affected (0.004 sec)
+
+Query OK, 0 rows affected (0.291 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.302 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.284 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.340 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.383 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.379 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.004 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 1 row affected (0.039 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 2 rows affected (0.054 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 4 rows affected (0.049 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.006 sec)
+
+Query OK, 3 rows affected (0.048 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 2 rows affected (0.051 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 5 rows affected (0.056 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 2 rows affected (0.038 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 1 row affected (0.044 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 2 rows affected (0.030 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 3 rows affected (0.028 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 2 rows affected (0.034 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 8 rows affected (0.094 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 13 rows affected (0.037 sec)
+Records: 13  Duplicates: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.004 sec)
+
+Query OK, 80 rows affected (0.062 sec)
+Records: 80  Duplicates: 0  Warnings: 0
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
++-----------------+-----------+---------------+--------------+-----------------+
+| assignment_name | avg_score | highest_score | lowest_score | num_submissions |
++-----------------+-----------+---------------+--------------+-----------------+
+| Homework 1      |     85.00 |         95.00 |        72.00 |               8 |
++-----------------+-----------+---------------+--------------+-----------------+
+1 row in set (0.017 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
++------------+------------+-----------+--------------------------+
+| student_id | first_name | last_name | email                    |
++------------+------------+-----------+--------------------------+
+|          4 | David      | Brown     | david.brown@email.com    |
+|          1 | Alice      | Johnson   | alice.johnson@email.com  |
+|          6 | Frank      | Lee       | frank.lee@email.com      |
+|          7 | Grace      | Martinez  | grace.martinez@email.com |
+|          8 | Henry      | Qiu       | henry.qiu@email.com      |
+|          5 | Eva        | Quinn     | eva.quinn@email.com      |
+|          3 | Carol      | Quinones  | carol.quinones@email.com |
+|          2 | Bob        | Smith     | bob.smith@email.com      |
++------------+------------+-----------+--------------------------+
+8 rows in set (0.004 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
++------------+-----------+-------------------------+---------------+-------+------------+
+| first_name | last_name | assignment_name         | category_name | score | max_points |
++------------+-----------+-------------------------+---------------+-------+------------+
+| David      | Brown     | Homework 1              | Homework      | 90.00 |     100.00 |
+| David      | Brown     | Homework 2              | Homework      | 91.00 |     100.00 |
+| David      | Brown     | Homework 3              | Homework      | 87.00 |     100.00 |
+| David      | Brown     | Homework 4              | Homework      | 92.00 |     100.00 |
+| David      | Brown     | Homework 5              | Homework      | 88.00 |     100.00 |
+| David      | Brown     | Week 1 Participation    | Participation |  7.00 |      10.00 |
+| David      | Brown     | Week 2 Participation    | Participation |  8.00 |      10.00 |
+| David      | Brown     | Database Design Project | Projects      | 92.00 |     100.00 |
+| David      | Brown     | Final Exam              | Tests         | 88.00 |     100.00 |
+| David      | Brown     | Midterm Exam            | Tests         | 91.00 |     100.00 |
+| Alice      | Johnson   | Homework 1              | Homework      | 92.00 |     100.00 |
+| Alice      | Johnson   | Homework 2              | Homework      | 88.00 |     100.00 |
+| Alice      | Johnson   | Homework 3              | Homework      | 95.00 |     100.00 |
+| Alice      | Johnson   | Homework 4              | Homework      | 90.00 |     100.00 |
+| Alice      | Johnson   | Homework 5              | Homework      | 85.00 |     100.00 |
+| Alice      | Johnson   | Week 1 Participation    | Participation |  9.00 |      10.00 |
+| Alice      | Johnson   | Week 2 Participation    | Participation | 10.00 |      10.00 |
+| Alice      | Johnson   | Database Design Project | Projects      | 95.00 |     100.00 |
+| Alice      | Johnson   | Final Exam              | Tests         | 92.00 |     100.00 |
+| Alice      | Johnson   | Midterm Exam            | Tests         | 88.00 |     100.00 |
+| Frank      | Lee       | Homework 1              | Homework      | 72.00 |     100.00 |
+| Frank      | Lee       | Homework 2              | Homework      | 68.00 |     100.00 |
+| Frank      | Lee       | Homework 3              | Homework      | 75.00 |     100.00 |
+| Frank      | Lee       | Homework 4              | Homework      | 70.00 |     100.00 |
+| Frank      | Lee       | Homework 5              | Homework      | 65.00 |     100.00 |
+| Frank      | Lee       | Week 1 Participation    | Participation |  6.00 |      10.00 |
+| Frank      | Lee       | Week 2 Participation    | Participation |  7.00 |      10.00 |
+| Frank      | Lee       | Database Design Project | Projects      | 75.00 |     100.00 |
+| Frank      | Lee       | Final Exam              | Tests         | 70.00 |     100.00 |
+| Frank      | Lee       | Midterm Exam            | Tests         | 65.00 |     100.00 |
+| Grace      | Martinez  | Homework 1              | Homework      | 95.00 |     100.00 |
+| Grace      | Martinez  | Homework 2              | Homework      | 93.00 |     100.00 |
+| Grace      | Martinez  | Homework 3              | Homework      | 90.00 |     100.00 |
+| Grace      | Martinez  | Homework 4              | Homework      | 88.00 |     100.00 |
+| Grace      | Martinez  | Homework 5              | Homework      | 92.00 |     100.00 |
+| Grace      | Martinez  | Week 1 Participation    | Participation |  8.00 |      10.00 |
+| Grace      | Martinez  | Week 2 Participation    | Participation |  9.00 |      10.00 |
+| Grace      | Martinez  | Database Design Project | Projects      | 93.00 |     100.00 |
+| Grace      | Martinez  | Final Exam              | Tests         | 91.00 |     100.00 |
+| Grace      | Martinez  | Midterm Exam            | Tests         | 87.00 |     100.00 |
+| Henry      | Qiu       | Homework 1              | Homework      | 80.00 |     100.00 |
+| Henry      | Qiu       | Homework 2              | Homework      | 85.00 |     100.00 |
+| Henry      | Qiu       | Homework 3              | Homework      | 78.00 |     100.00 |
+| Henry      | Qiu       | Homework 4              | Homework      | 83.00 |     100.00 |
+| Henry      | Qiu       | Homework 5              | Homework      | 79.00 |     100.00 |
+| Henry      | Qiu       | Week 1 Participation    | Participation | 10.00 |      10.00 |
+| Henry      | Qiu       | Week 2 Participation    | Participation |  8.00 |      10.00 |
+| Henry      | Qiu       | Database Design Project | Projects      | 82.00 |     100.00 |
+| Henry      | Qiu       | Final Exam              | Tests         | 78.00 |     100.00 |
+| Henry      | Qiu       | Midterm Exam            | Tests         | 74.00 |     100.00 |
+| Eva        | Quinn     | Homework 1              | Homework      | 88.00 |     100.00 |
+| Eva        | Quinn     | Homework 2              | Homework      | 76.00 |     100.00 |
+| Eva        | Quinn     | Homework 3              | Homework      | 91.00 |     100.00 |
+| Eva        | Quinn     | Homework 4              | Homework      | 80.00 |     100.00 |
+| Eva        | Quinn     | Homework 5              | Homework      | 77.00 |     100.00 |
+| Eva        | Quinn     | Week 1 Participation    | Participation |  9.00 |      10.00 |
+| Eva        | Quinn     | Week 2 Participation    | Participation | 10.00 |      10.00 |
+| Eva        | Quinn     | Database Design Project | Projects      | 88.00 |     100.00 |
+| Eva        | Quinn     | Final Exam              | Tests         | 83.00 |     100.00 |
+| Eva        | Quinn     | Midterm Exam            | Tests         | 79.00 |     100.00 |
+| Carol      | Quinones  | Homework 1              | Homework      | 78.00 |     100.00 |
+| Carol      | Quinones  | Homework 2              | Homework      | 82.00 |     100.00 |
+| Carol      | Quinones  | Homework 3              | Homework      | 88.00 |     100.00 |
+| Carol      | Quinones  | Homework 4              | Homework      | 85.00 |     100.00 |
+| Carol      | Quinones  | Homework 5              | Homework      | 90.00 |     100.00 |
+| Carol      | Quinones  | Week 1 Participation    | Participation | 10.00 |      10.00 |
+| Carol      | Quinones  | Week 2 Participation    | Participation |  9.00 |      10.00 |
+| Carol      | Quinones  | Database Design Project | Projects      | 90.00 |     100.00 |
+| Carol      | Quinones  | Final Exam              | Tests         | 85.00 |     100.00 |
+| Carol      | Quinones  | Midterm Exam            | Tests         | 83.00 |     100.00 |
+| Bob        | Smith     | Homework 1              | Homework      | 85.00 |     100.00 |
+| Bob        | Smith     | Homework 2              | Homework      | 79.00 |     100.00 |
+| Bob        | Smith     | Homework 3              | Homework      | 82.00 |     100.00 |
+| Bob        | Smith     | Homework 4              | Homework      | 88.00 |     100.00 |
+| Bob        | Smith     | Homework 5              | Homework      | 80.00 |     100.00 |
+| Bob        | Smith     | Week 1 Participation    | Participation |  8.00 |      10.00 |
+| Bob        | Smith     | Week 2 Participation    | Participation |  7.00 |      10.00 |
+| Bob        | Smith     | Database Design Project | Projects      | 85.00 |     100.00 |
+| Bob        | Smith     | Final Exam              | Tests         | 80.00 |     100.00 |
+| Bob        | Smith     | Midterm Exam            | Tests         | 76.00 |     100.00 |
++------------+-----------+-------------------------+---------------+-------+------------+
+80 rows in set (0.018 sec)
+
+Query OK, 0 rows affected (0.004 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 1 row affected (0.080 sec)
+
+Query OK, 0 rows affected (0.007 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 1 row affected (0.052 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+Query OK, 1 row affected (0.028 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+Query OK, 0 rows affected (0.001 sec)
+
++-----------+--------------+
+| course_id | total_weight |
++-----------+--------------+
+|         1 |       100.00 |
++-----------+--------------+
+1 row in set (0.003 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 8 rows affected (0.050 sec)
+Rows matched: 8  Changed: 8  Warnings: 0
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 3 rows affected (0.051 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
++------------+-----------+---------------------------+-------------+
+| first_name | last_name | course_name               | final_grade |
++------------+-----------+---------------------------+-------------+
+| Alice      | Johnson   | Introduction to Databases |       91.80 |
++------------+-----------+---------------------------+-------------+
+1 row in set (0.007 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.003 sec)
+
+Query OK, 0 rows affected (0.002 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
+Query OK, 0 rows affected (0.001 sec)
+
++------------+-----------+---------------------------+-------------------------+
+| first_name | last_name | course_name               | final_grade_drop_lowest |
++------------+-----------+---------------------------+-------------------------+
+| Alice      | Johnson   | Introduction to Databases |                   93.10 |
++------------+-----------+---------------------------+-------------------------+
+1 row in set (0.047 sec)
+
+mysql> 
+
+Connecting to Grade Book Database...
+Connected.
+
+
+╔══════════════════════════════════════════════════╗
+║          GRADE BOOK DATABASE — MENU              ║
+╠══════════════════════════════════════════════════╣
+║  1.  Assignment stats (avg / high / low)         ║
+║  2.  List students in a course                   ║
+║  3.  All students + all scores in a course       ║
+║  4.  Add an assignment to a course               ║
+║  5.  Change category weights for a course        ║
+║  6.  Add points to all students on assignment    ║
+║  7. Add points to students with 'Q' in name     ║
+║  8. Compute a student's final grade             ║
+║  9. Grade with lowest score dropped per cat.    ║
+║  q.  Quit                                        ║
+╚══════════════════════════════════════════════════╝
+
+
+Available Assignments:
++---------------+-------------------------+------------+
+| assignment_id | assignment_name         | max_points |
++---------------+-------------------------+------------+
+| 1             | Week 1 Participation    | 10.00      |
+| 2             | Week 2 Participation    | 10.00      |
+| 3             | Homework 1              | 100.00     |
+| 4             | Homework 2              | 100.00     |
+| 5             | Homework 3              | 100.00     |
+| 6             | Homework 4              | 100.00     |
+| 7             | Homework 5              | 100.00     |
+| 8             | Midterm Exam            | 100.00     |
+| 9             | Final Exam              | 100.00     |
+| 10            | Database Design Project | 100.00     |
+| 11            | Week 1 Participation    | 10.00      |
+| 12            | Week 2 Participation    | 10.00      |
+| 13            | Homework 1              | 100.00     |
+| 14            | Homework 2              | 100.00     |
+| 15            | Homework 3              | 100.00     |
+| 16            | Midterm Exam            | 100.00     |
+| 17            | Final Exam              | 100.00     |
+| 18            | Homework 6              | 100.00     |
++---------------+-------------------------+------------+
+  18 row(s) returned.
+
+  Added 1.0 points to 3 student(s) with 'Q' in last name.
+
+
+╔══════════════════════════════════════════════════╗
+║          GRADE BOOK DATABASE — MENU              ║
+╠══════════════════════════════════════════════════╣
+║  1.  Assignment stats (avg / high / low)         ║
+║  2.  List students in a course                   ║
+║  3.  All students + all scores in a course       ║
+║  4.  Add an assignment to a course               ║
+║  5.  Change category weights for a course        ║
+║  6.  Add points to all students on assignment    ║
+║  7. Add points to students with 'Q' in name     ║
+║  8. Compute a student's final grade             ║
+║  9. Grade with lowest score dropped per cat.    ║
+║  q.  Quit                                        ║
+╚══════════════════════════════════════════════════╝
+
+  Invalid choice. Please try again.
+
+
+╔══════════════════════════════════════════════════╗
+║          GRADE BOOK DATABASE — MENU              ║
+╠══════════════════════════════════════════════════╣
+║  1.  Assignment stats (avg / high / low)         ║
+║  2.  List students in a course                   ║
+║  3.  All students + all scores in a course       ║
+║  4.  Add an assignment to a course               ║
+║  5.  Change category weights for a course        ║
+║  6.  Add points to all students on assignment    ║
+║  7. Add points to students with 'Q' in name     ║
+║  8. Compute a student's final grade             ║
+║  9. Grade with lowest score dropped per cat.    ║
+║  q.  Quit                                        ║
+╚══════════════════════════════════════════════════╝
+
+
+Students:
++------------+------------+-----------+
+| student_id | first_name | last_name |
++------------+------------+-----------+
+| 1          | Alice      | Johnson   |
+| 2          | Bob        | Smith     |
+| 3          | Carol      | Quinones  |
+| 4          | David      | Brown     |
+| 5          | Eva        | Quinn     |
+| 6          | Frank      | Lee       |
+| 7          | Grace      | Martinez  |
+| 8          | Henry      | Qiu       |
++------------+------------+-----------+
+  8 row(s) returned.
+
+
+Courses:
++-----------+---------------------------+
+| course_id | course_name               |
++-----------+---------------------------+
+| 1         | Introduction to Databases |
+| 2         | Data Structures           |
++-----------+---------------------------+
+  2 row(s) returned.
+
++------------+-----------+---------------------------+-------------------------+
+| first_name | last_name | course_name               | final_grade_drop_lowest |
++------------+-----------+---------------------------+-------------------------+
+| Eva        | Quinn     | Introduction to Databases | 88.40                   |
++------------+-----------+---------------------------+-------------------------+
+  1 row(s) returned.
+
+
+╔══════════════════════════════════════════════════╗
+║          GRADE BOOK DATABASE — MENU              ║
+╠══════════════════════════════════════════════════╣
+║  1.  Assignment stats (avg / high / low)         ║
+║  2.  List students in a course                   ║
+║  3.  All students + all scores in a course       ║
+║  4.  Add an assignment to a course               ║
+║  5.  Change category weights for a course        ║
+║  6.  Add points to all students on assignment    ║
+║  7. Add points to students with 'Q' in name     ║
+║  8. Compute a student's final grade             ║
+║  9. Grade with lowest score dropped per cat.    ║
+║  q.  Quit                                        ║
+╚══════════════════════════════════════════════════╝
+
+  Goodbye!

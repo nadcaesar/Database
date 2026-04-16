@@ -20,8 +20,8 @@ SELECT * FROM Course;
 SELECT 'CATEGORY TABLE' AS '';
 SELECT * FROM Category;
 
-SELECT 'ASSIGNMENT TABLE' AS '';
-SELECT * FROM Assignment;
+SELECT 'Assignments  TABLE' AS '';
+SELECT * FROM Assignments;
 
 SELECT 'STUDENT TABLE' AS '';
 SELECT * FROM Student;
@@ -37,7 +37,7 @@ SELECT * FROM Submission;
 -- TASK 4: Average / Highest / Lowest score per assignment
 -- ============================================================
 
-SELECT 'TASK 4 — Assignment Statistics' AS '';
+SELECT 'TASK 4 — Assignments  Statistics' AS '';
 SELECT
     a.assignment_name,
     ROUND(AVG(s.score), 2)  AS avg_score,
@@ -45,7 +45,7 @@ SELECT
     MIN(s.score)             AS lowest_score,
     COUNT(s.score)           AS num_submissions
 FROM Submission s
-JOIN Assignment a ON s.assignment_id = a.assignment_id
+JOIN Assignments  a ON s.assignment_id = a.assignment_id
 GROUP BY a.assignment_id, a.assignment_name
 ORDER BY a.assignment_id;
 
@@ -92,7 +92,7 @@ SELECT
 FROM Student st
 JOIN Enrollment  e   ON st.student_id    = e.student_id
 JOIN Category    cat ON e.course_id      = cat.course_id
-JOIN Assignment  a   ON cat.category_id  = a.category_id
+JOIN Assignments   a   ON cat.category_id  = a.category_id
 LEFT JOIN Submission sub ON st.student_id  = sub.student_id
                         AND a.assignment_id = sub.assignment_id
 WHERE e.course_id = 1
@@ -103,18 +103,10 @@ ORDER BY st.last_name, st.first_name, cat.category_name, a.assignment_name;
 -- TASK 7: Add an assignment (Homework 6) to CS101
 -- ============================================================
 
-SELECT 'TASK 7 — Before: Assignments in CS101 Homework category' AS '';
+-- Homework 6 was already inserted by gradebook.sql Task 7 — showing result only
+SELECT 'TASK 7 — Homework 6 added to CS101 Homework category' AS '';
 SELECT a.assignment_id, a.assignment_name, a.max_points
-FROM Assignment a
-JOIN Category cat ON a.category_id = cat.category_id
-WHERE cat.course_id = 1 AND cat.category_name = 'Homework';
-
-INSERT IGNORE INTO Assignment (category_id, assignment_name, max_points)
-VALUES (2, 'Homework 6', 100);
-
-SELECT 'TASK 7 — After: Homework 6 added' AS '';
-SELECT a.assignment_id, a.assignment_name, a.max_points
-FROM Assignment a
+FROM Assignments a
 JOIN Category cat ON a.category_id = cat.category_id
 WHERE cat.course_id = 1 AND cat.category_name = 'Homework';
 
@@ -148,7 +140,7 @@ WHERE sub.assignment_id = 8
 ORDER BY st.last_name;
 
 UPDATE Submission s
-JOIN Assignment a ON s.assignment_id = a.assignment_id
+JOIN Assignments  a ON s.assignment_id = a.assignment_id
 SET s.score = LEAST(s.score + 2, a.max_points)
 WHERE s.assignment_id = 8;
 
@@ -173,7 +165,7 @@ ORDER BY st.last_name;
 
 UPDATE Submission s
 JOIN Student    st ON s.student_id    = st.student_id
-JOIN Assignment a  ON s.assignment_id = a.assignment_id
+JOIN Assignments  a  ON s.assignment_id = a.assignment_id
 SET s.score = LEAST(s.score + 2, a.max_points)
 WHERE s.assignment_id = 8
   AND st.last_name LIKE '%Q%';
@@ -202,7 +194,7 @@ FROM (
         a.category_id,
         (AVG(sub.score / a.max_points) * cat.weight_pct) AS cat_grade
     FROM Submission sub
-    JOIN Assignment  a   ON sub.assignment_id = a.assignment_id
+    JOIN Assignments   a   ON sub.assignment_id = a.assignment_id
     JOIN Category    cat ON a.category_id     = cat.category_id
     WHERE cat.course_id = 1
     GROUP BY sub.student_id, a.category_id, cat.weight_pct
@@ -225,22 +217,32 @@ SELECT
     ROUND(SUM(cat_grade), 2) AS final_grade_drop_lowest
 FROM (
     SELECT
-        sub.student_id,
-        a.category_id,
+        ranked.student_id,
+        ranked.category_id,
         cat.weight_pct,
-        (AVG(sub.score / a.max_points) * cat.weight_pct) AS cat_grade
-    FROM Submission sub
-    JOIN Assignment  a   ON sub.assignment_id = a.assignment_id
-    JOIN Category    cat ON a.category_id     = cat.category_id
-    WHERE cat.course_id = 1
-      AND sub.score > (
-          SELECT MIN(s2.score)
-          FROM Submission s2
-          JOIN Assignment a2 ON s2.assignment_id = a2.assignment_id
-          WHERE s2.student_id = sub.student_id
-            AND a2.category_id = a.category_id
-      )
-    GROUP BY sub.student_id, a.category_id, cat.weight_pct
+        (AVG(ranked.score / ranked.max_points) * cat.weight_pct) AS cat_grade
+    FROM (
+        SELECT
+            sub.student_id,
+            sub.score,
+            a.max_points,
+            a.category_id,
+            ROW_NUMBER() OVER (
+                PARTITION BY sub.student_id, a.category_id
+                ORDER BY sub.score ASC
+            ) AS rn,
+            COUNT(*) OVER (
+                PARTITION BY sub.student_id, a.category_id
+            ) AS total_in_cat
+        FROM Submission sub
+        JOIN Assignments a   ON sub.assignment_id = a.assignment_id
+        JOIN Category    cat ON a.category_id     = cat.category_id
+        WHERE cat.course_id = 1
+          AND sub.score IS NOT NULL
+    ) AS ranked
+    JOIN Category cat ON ranked.category_id = cat.category_id
+    WHERE ranked.rn > 1 OR ranked.total_in_cat = 1
+    GROUP BY ranked.student_id, ranked.category_id, cat.weight_pct
 ) AS graded
 JOIN Student st ON graded.student_id = st.student_id
 JOIN Course  c  ON c.course_id = 1

@@ -1,0 +1,135 @@
+
+<!-- saved from url=(0055)https://cs-howard.net/liu/Database/DatabaseProject.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=GBK">
+<meta http-equiv="Content-Language" content="en-us">
+
+<title>Database Project</title>
+<style>
+<!--
+h1
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:16.0pt;
+	font-family:"Arial",sans-serif;
+	}
+ p.MsoNormal
+	{mso-style-parent:"";
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman",serif;
+	margin-left:0in; margin-right:0in; margin-top:0in}
+h2
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:"Arial",sans-serif;
+	font-style:italic}
+h3
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:13.0pt;
+	font-family:"Arial",sans-serif;
+	}
+ li.MsoNormal
+	{mso-style-parent:"";
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman",serif;
+	margin-left:0in; margin-right:0in; margin-top:0in}
+-->
+</style>
+</head>
+
+<body>
+
+<h1 align="center" style="text-align:center">Create a Grade Book Database </h1>
+<h3>1. Problem Statement</h3>
+<p class="MsoNormal">You are asked to implement a grade book to keep track 
+student grades for several couses that a professor teaches. Courses should have 
+the information of department, course number, course name, semester, and year.&nbsp; 
+For each course, the grade is caculated on various categories, including course 
+participations, homework, tests, projects, etc.&nbsp; The total percentages of the 
+categories should add to 100% and the total perfect grade should be 100. The 
+number of assignments from each category is unspecified, and can change at any 
+time.&nbsp; For example, a course may be graded by the distribution: 10% 
+participation, 20% homework, 50% tests, 20% projects. Please note that if there 
+are 5 homework, each homework is worth 20%/5=4% of the grade.</p>
+<p class="MsoNormal">　</p>
+<h3>2. Tasks</h3>
+<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="1">
+	<li class="MsoNormal">Design the ER diagram;</li>
+	<li class="MsoNormal">Write the commands for creating tables and inserting 
+	values;</li>
+	<li class="MsoNormal">Show the tables with the contents that you have 
+	inserted;</li>
+	<li class="MsoNormal">Compute the average/highest/lowest score of an 
+	assignment;</li>
+	<li class="MsoNormal">List all of the students in a given course;</li>
+	<li class="MsoNormal">List all of the students in a course and all of their 
+	scores on every assignment;</li>
+	<li class="MsoNormal">Add an assignment to a course;</li>
+	<li class="MsoNormal">Change the percentages of the categories for a course;</li>
+	<li class="MsoNormal">Add 2 points to the score of each student on an 
+	assignment;</li>
+	<li class="MsoNormal">Add 2 points just to those students whose last name 
+	contains a ‘Q’.</li>
+	<li class="MsoNormal">Compute the grade for a student;</li>
+	<li class="MsoNormal">Compute the grade for a student, where the lowest 
+	score for a given category is dropped.</li>
+</ol>
+<p class="MsoNormal">　</p>
+<h3>3. Your submission </h3>
+<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="1">
+	<li class="MsoNormal">The ER diagram (with the attributes and foreign keys/primary 
+	keys 
+	indicated);</li>
+	<li class="MsoNormal">The commands for creating tables and inserting values 
+	(task 2);</li>
+	<li class="MsoNormal">The tables with the contents that you have inserted 
+	(task 3);</li>
+	<li class="MsoNormal">The command that you use to get task 4, 5, 6, 7, 8, 9, 
+	10, 11, 12;</li>
+	<li class="MsoNormal">The source code;</li>
+	<li class="MsoNormal">A README file. The minimum required content of the 
+	file should contains the instructions to compile and execute your code;</li>
+	<li class="MsoNormal">The test cases that you use and the results that you 
+	get from the test cases.</li>
+</ol>
+<p class="MsoNormal">　</p>
+<p><b><font face="Times New Roman" size="4">Grading rubrics (total possible 
+points is 100):</font></b></p>
+<ul>
+	<li><font face="Times New Roman">Task 2: 5 pts</font></li>
+	<li><font face="Times New Roman">Task 3: 5 pts</font></li>
+	<li><font face="Times New Roman">Task 4: 5 pts</font></li>
+	<li><font face="Times New Roman">Task 5: 5 pts</font></li>
+	<li><font face="Times New Roman">Task 6: 5 pts</font></li>
+	<li><font face="Times New Roman">Task 7: 5 pts</font></li>
+	<li><font face="Times New Roman">Task 8: 5 pts</font></li>
+	<li><font face="Times New Roman">Task 9: 5 pts</font></li>
+	<li><font face="Times New Roman">Task 10: 5 pts</font></li>
+	<li><font face="Times New Roman">Task 11: 5 pts</font></li>
+	<li><font face="Times New Roman">Task 12: 5 pts</font></li>
+	<li><font face="Times New Roman">Report: ER diagram - 15 pts</font></li>
+	<li><font face="Times New Roman">Report: source code - 5</font></li>
+	<li><font face="Times New Roman">Report: README file - 5</font></li>
+	<li><font face="Times New Roman">Report: test cases - 5</font></li>
+	<li><font face="Times New Roman">Report: writing - 5</font></li>
+	<li><font face="Times New Roman">Report: completeness - 5</font></li>
+	<li><font face="Times New Roman">Oral Presentation - 5</font></li>
+</ul>
+<p class="MsoNormal">　</p>
+
+
+
+
+</body></html>

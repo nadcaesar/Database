@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 gradebook.py
 Grade Book Database — Python interface
@@ -58,7 +57,7 @@ def print_results(cursor):
 def task4_assignment_stats(conn):
     cursor = conn.cursor()
     # Show available assignments first
-    cursor.execute("SELECT assignment_id, assignment_name FROM Assignment ORDER BY assignment_id")
+    cursor.execute("SELECT assignment_id, assignment_name FROM Assignments ORDER BY assignment_id")
     print("\nAvailable Assignments:")
     print_results(cursor)
     aid = int(input("Enter assignment_id to get stats: "))
@@ -70,7 +69,7 @@ def task4_assignment_stats(conn):
             MIN(s.score)             AS lowest_score,
             COUNT(s.score)           AS submissions
         FROM Submission s
-        JOIN Assignment a ON s.assignment_id = a.assignment_id
+        JOIN Assignments a ON s.assignment_id = a.assignment_id
         WHERE a.assignment_id = %s
     """, (aid,))
     print_results(cursor)
@@ -116,7 +115,7 @@ def task6_all_scores(conn):
         FROM Student st
         JOIN Enrollment  e   ON st.student_id    = e.student_id
         JOIN Category    cat ON e.course_id      = cat.course_id
-        JOIN Assignment  a   ON cat.category_id  = a.category_id
+        JOIN Assignments a   ON cat.category_id  = a.category_id
         LEFT JOIN Submission sub ON st.student_id = sub.student_id
                                 AND a.assignment_id = sub.assignment_id
         WHERE e.course_id = %s
@@ -145,12 +144,12 @@ def task7_add_assignment(conn):
     pts  = float(input("Max points (default 100): ") or "100")
 
     cursor.execute("""
-        INSERT INTO Assignment (category_id, assignment_name, max_points)
+        INSERT INTO Assignments (category_id, assignment_name, max_points)
         VALUES (%s, %s, %s)
     """, (cat_id, name, pts))
     conn.commit()
     new_id = cursor.lastrowid
-    print(f"\n  ✅ Assignment '{name}' added with assignment_id = {new_id}")
+    print(f"\n   Assignment '{name}' added with assignment_id = {new_id}")
 
     # Optionally insert blank submissions for all enrolled students
     cursor.execute("""
@@ -163,7 +162,7 @@ def task7_add_assignment(conn):
             VALUES (%s, %s, NULL)
         """, (sid, new_id))
     conn.commit()
-    print(f"  ✅ Blank submissions created for {len(students)} enrolled students.\n")
+    print(f"   Blank submissions created for {len(students)} enrolled students.\n")
     cursor.close()
 
 
@@ -195,13 +194,13 @@ def task8_change_weights(conn):
         total += w
 
     if abs(total - 100.0) > 0.01:
-        print(f"  ❌ Weights sum to {total:.2f}, not 100. No changes made.")
+        print(f"  Weights sum to {total:.2f}, not 100. No changes made.")
         return
 
     for (w, cat_id) in updates:
         cursor.execute("UPDATE Category SET weight_pct = %s WHERE category_id = %s", (w, cat_id))
     conn.commit()
-    print("  ✅ Weights updated successfully.\n")
+    print("  Weights updated successfully.\n")
     cursor.close()
 
 
@@ -210,7 +209,7 @@ def task8_change_weights(conn):
 # ════════════════════════════════════════════════════════════════
 def task9_add_points_all(conn):
     cursor = conn.cursor()
-    cursor.execute("SELECT assignment_id, assignment_name, max_points FROM Assignment ORDER BY assignment_id")
+    cursor.execute("SELECT assignment_id, assignment_name, max_points FROM Assignments ORDER BY assignment_id")
     print("\nAvailable Assignments:")
     print_results(cursor)
     aid = int(input("Enter assignment_id to add 2 points to (all students): "))
@@ -218,12 +217,12 @@ def task9_add_points_all(conn):
 
     cursor.execute("""
         UPDATE Submission s
-        JOIN Assignment a ON s.assignment_id = a.assignment_id
+        JOIN Assignments a ON s.assignment_id = a.assignment_id
         SET s.score = LEAST(s.score + %s, a.max_points)
         WHERE s.assignment_id = %s AND s.score IS NOT NULL
     """, (pts, aid))
     conn.commit()
-    print(f"  ✅ Added {pts} points to {cursor.rowcount} submission(s), capped at max_points.\n")
+    print(f"  Added {pts} points to {cursor.rowcount} submission(s), capped at max_points.\n")
     cursor.close()
 
 
@@ -232,7 +231,7 @@ def task9_add_points_all(conn):
 # ════════════════════════════════════════════════════════════════
 def task10_add_points_q(conn):
     cursor = conn.cursor()
-    cursor.execute("SELECT assignment_id, assignment_name, max_points FROM Assignment ORDER BY assignment_id")
+    cursor.execute("SELECT assignment_id, assignment_name, max_points FROM Assignments ORDER BY assignment_id")
     print("\nAvailable Assignments:")
     print_results(cursor)
     aid = int(input("Enter assignment_id (only students with 'Q' in last name get +2): "))
@@ -241,14 +240,14 @@ def task10_add_points_q(conn):
     cursor.execute("""
         UPDATE Submission s
         JOIN Student    st ON s.student_id    = st.student_id
-        JOIN Assignment a  ON s.assignment_id = a.assignment_id
+        JOIN Assignments a  ON s.assignment_id = a.assignment_id
         SET s.score = LEAST(s.score + %s, a.max_points)
         WHERE s.assignment_id = %s
           AND st.last_name LIKE '%Q%'
           AND s.score IS NOT NULL
     """, (pts, aid))
     conn.commit()
-    print(f"  ✅ Added {pts} points to {cursor.rowcount} student(s) with 'Q' in last name.\n")
+    print(f"  Added {pts} points to {cursor.rowcount} student(s) with 'Q' in last name.\n")
     cursor.close()
 
 
@@ -279,7 +278,7 @@ def task11_student_grade(conn):
                 a.category_id,
                 (AVG(sub.score / a.max_points) * cat.weight_pct) AS cat_grade
             FROM Submission sub
-            JOIN Assignment  a   ON sub.assignment_id = a.assignment_id
+            JOIN Assignments a   ON sub.assignment_id = a.assignment_id
             JOIN Category    cat ON a.category_id     = cat.category_id
             WHERE cat.course_id = %s AND sub.student_id = %s
             GROUP BY sub.student_id, a.category_id, cat.weight_pct
@@ -315,23 +314,33 @@ def task12_grade_drop_lowest(conn):
             ROUND(SUM(cat_grade), 2) AS final_grade_drop_lowest
         FROM (
             SELECT
-                sub.student_id,
-                a.category_id,
+                ranked.student_id,
+                ranked.category_id,
                 cat.weight_pct,
-                (AVG(sub.score / a.max_points) * cat.weight_pct) AS cat_grade
-            FROM Submission sub
-            JOIN Assignment  a   ON sub.assignment_id = a.assignment_id
-            JOIN Category    cat ON a.category_id     = cat.category_id
-            WHERE cat.course_id = %s
-              AND sub.student_id = %s
-              AND sub.score > (
-                  SELECT MIN(s2.score)
-                  FROM Submission s2
-                  JOIN Assignment a2 ON s2.assignment_id = a2.assignment_id
-                  WHERE s2.student_id = sub.student_id
-                    AND a2.category_id = a.category_id
-              )
-            GROUP BY sub.student_id, a.category_id, cat.weight_pct
+                (AVG(ranked.score / ranked.max_points) * cat.weight_pct) AS cat_grade
+            FROM (
+                SELECT
+                    sub.student_id,
+                    sub.score,
+                    a.max_points,
+                    a.category_id,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY sub.student_id, a.category_id
+                        ORDER BY sub.score ASC
+                    ) AS rn,
+                    COUNT(*) OVER (
+                        PARTITION BY sub.student_id, a.category_id
+                    ) AS total_in_cat
+                FROM Submission sub
+                JOIN Assignments a   ON sub.assignment_id = a.assignment_id
+                JOIN Category    cat ON a.category_id     = cat.category_id
+                WHERE cat.course_id = %s
+                  AND sub.student_id = %s
+                  AND sub.score IS NOT NULL
+            ) AS ranked
+            JOIN Category cat ON ranked.category_id = cat.category_id
+            WHERE ranked.rn > 1 OR ranked.total_in_cat = 1
+            GROUP BY ranked.student_id, ranked.category_id, cat.weight_pct
         ) AS graded
         JOIN Student st ON graded.student_id = st.student_id
         JOIN Course  c  ON c.course_id = %s
@@ -348,35 +357,35 @@ MENU = """
 ╔══════════════════════════════════════════════════╗
 ║          GRADE BOOK DATABASE — MENU              ║
 ╠══════════════════════════════════════════════════╣
-║  1.  Assignment stats (avg / high / low)         ║
-║  2.  List students in a course                   ║
-║  3.  All students + all scores in a course       ║
-║  4.  Add an assignment to a course               ║
-║  5.  Change category weights for a course        ║
-║  6.  Add points to all students on assignment    ║
-║  7. Add points to students with 'Q' in name     ║
-║  8. Compute a student's final grade             ║
-║  9. Grade with lowest score dropped per cat.    ║
-║  q.  Quit                                        ║
+║   4.  Assignment stats (avg / high / low)        ║
+║   5.  List students in a course                  ║
+║   6.  All students + all scores in a course      ║
+║   7.  Add an assignment to a course              ║
+║   8.  Change category weights for a course       ║
+║   9.  Add points to all students on assignment   ║
+║  10.  Add points to students with 'Q' in name   ║
+║  11.  Compute a student's final grade            ║
+║  12.  Grade with lowest score dropped per cat.   ║
+║   q.  Quit                                       ║
 ╚══════════════════════════════════════════════════╝
 """
 
 TASKS = {
-    "1":  task4_assignment_stats,
-    "2":  task5_students_in_course,
-    "3":  task6_all_scores,
-    "4":  task7_add_assignment,
-    "5":  task8_change_weights,
-    "6":  task9_add_points_all,
-    "7": task10_add_points_q,
-    "8": task11_student_grade,
-    "9": task12_grade_drop_lowest,
+    "4":  task4_assignment_stats,
+    "5":  task5_students_in_course,
+    "6":  task6_all_scores,
+    "7":  task7_add_assignment,
+    "8":  task8_change_weights,
+    "9":  task9_add_points_all,
+    "10": task10_add_points_q,
+    "11": task11_student_grade,
+    "12": task12_grade_drop_lowest,
 }
 
 def main():
     print("\n  Connecting to Grade Book Database...")
     conn = get_connection()
-    print("  ✅ Connected.\n")
+    print("Connected.\n")
 
     while True:
         print(MENU)
