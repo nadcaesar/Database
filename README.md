@@ -1,6 +1,16 @@
-# Grade Book Database — README
 
-## Project Overview
+# Grade Book Database — README
+---
+
+## Group members 
+
+Brian Kiprop Too 
+Michael Cobbins 
+Nicholas Caesar
+
+---
+
+## Project Overview   
 A MySQL-backed grade book that allows a professor to manage courses,
 grading categories, assignments, students, and scores. Supports grade
 computation including a "drop lowest" mode per category.
@@ -12,7 +22,7 @@ computation including a "drop lowest" mode per category.
 |---|---|
 | `gradebook.sql` | Full SQL: schema creation, sample data, and all task queries |
 | `gradebook.py` | Python menu-driven interface for Tasks 4–12 |
-| `README.md` | This file |
+
 
 ---
 
@@ -48,65 +58,15 @@ DB_CONFIG = {
 ```
 
 ### Step 4 — Run the program
+mysql terminal: 
+```bash
+source gradebook.sql
+```
+powershell terminal:
 ```bash
 python gradebook.py
 ```
-You will see a menu. Type a task number (4–12) and press Enter.
-
----
-
-## Database Schema
-
-```
-Professor(professor_id PK, first_name, last_name, email)
-    │
-    └── Course(course_id PK, professor_id FK, department,
-               course_number, course_name, semester, year)
-                │
-                └── Category(category_id PK, course_id FK,
-                              category_name, weight_pct)
-                              [weights must sum to 100 per course]
-                        │
-                        └── Assignment(assignment_id PK, category_id FK,
-                                       assignment_name, max_points)
-
-Student(student_id PK, first_name, last_name, email)
-    │
-    ├── Enrollment(enrollment_id PK, student_id FK, course_id FK)
-    │
-    └── Submission(submission_id PK, student_id FK,
-                   assignment_id FK, score)
-```
-
-**Key Design Decisions:**
-- Category weights per course must sum to 100 (validated in Python)
-- Each assignment belongs to exactly one category
-- Submission score can be NULL (not yet graded)
-- Scores are capped at `max_points` when adding bonus points
-
----
-
-## Grade Calculation
-
-### Task 11 — Normal Grade
-For each category:
-```
-category_contribution = AVG(score / max_points) × weight_pct
-```
-Final grade = sum of all category contributions.
-
-### Task 12 — Drop Lowest
-Same as Task 11, but the single lowest score in each category is
-excluded from the average before computing the contribution.
-
----
-
-## Sample Data Summary
-- **1 Professor**: Maria Liu
-- **2 Courses**: CS101 (Fall 2024), CS201 (Spring 2025)
-- **8 Students**: includes Quinones, Quinn, and Qiu (for Task 10 testing)
-- **~10 Assignments** across CS101, **~7** in CS201
-- **Complete submissions** for all students in CS101
+You will see a menu. Type a task number (1-9) and press Enter.
 
 ---
 
